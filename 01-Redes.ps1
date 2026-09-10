@@ -29,10 +29,11 @@ do {
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Vaciar Caché DNS          " -NoNewline
     Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Ajustes de Red Windows"
     
-    Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Restablecer Winsock       " -NoNewline
-    Write-Host "[00] " -NoNewline -ForegroundColor Cyan; Write-Host "Volver al Menú Principal"
+    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Restablecer Winsock       " -NoNewline
+    Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Volver al Menú Principal"
     Write-Host ""
-
+ Write-Host "[00] FINALIZAR SESIÓN" -ForegroundColor Yellow
+    Write-Host ""
     $choice = Read-Host "INGRESE COMANDO"
 
     switch ($choice) {
