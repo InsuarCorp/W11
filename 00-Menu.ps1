@@ -32,7 +32,7 @@ do {
     Write-Host "             Análisis                      Hardware                       Windows" -ForegroundColor Magenta
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Análisis de Redes         " -NoNewline
     Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Diagnóstico de Hardware    " -NoNewline
-    Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 11"
+    Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Mantenimiento"
     
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 02                 " -NoNewline
     Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 07                 " -NoNewline
@@ -72,7 +72,7 @@ do {
         '10'                 { Cargar-Modulo "10.ps1" }
 
         # --- COLUMNA 3 ---
-        '11'                 { Cargar-Modulo "11.ps1" }
+        '11'                 { Cargar-Modulo "11-Mantenimiento.ps1" }
         '12'                 { Cargar-Modulo "12.ps1" }
         '13'                 { Cargar-Modulo "13.ps1" }
         '14'                 { Cargar-Modulo "14.ps1" }
