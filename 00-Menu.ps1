@@ -48,7 +48,7 @@ do {
     switch ($choice) {
         { $_ -in '1', '01' } {
             Write-Host "`n[+] Cargando módulo 01..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/01.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/01-Redes.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '2', '02' } {
