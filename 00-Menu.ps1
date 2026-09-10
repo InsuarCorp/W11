@@ -1,11 +1,22 @@
 # Configuración del título de la ventana
 $host.UI.RawUI.WindowTitle = "SISTEMA // HERRAMIENTAS DE RED"
 
-# Bucle principal para mantener el menú abierto
+# Función helper para intentar descargar y ejecutar módulos remotos de forma segura
+function Cargar-Modulo ($nombreArchivo) {
+    Write-Host "`n[+] Cargando $nombreArchivo..." -ForegroundColor Cyan
+    try {
+        irm "https://raw.githubusercontent.com/InsuarCorp/W11/main/$nombreArchivo" -ErrorAction Stop | iex
+    }
+    catch {
+        Write-Host "`n[!] MÓDULO NO DISPONIBLE" -ForegroundColor Red
+    }
+    Read-Host "`nPresione Enter para continuar..."
+}
+
 do {
     Clear-Host
 
-    # Carga y ejecuta info.ps1 directamente desde el repositorio
+    # Carga ejecutable directo desde el repositorio
     irm https://raw.githubusercontent.com/InsuarCorp/W11/main/info.ps1 | iex
     Write-Host ""
 
@@ -18,25 +29,25 @@ do {
     Write-Host "========================================================================================" -ForegroundColor Magenta
     Write-Host ""
     
-    Write-Host "             Analisis                      Hardware                       Windows" -ForegroundColor Magenta
+    Write-Host "             Análisis                      Hardware                       Windows" -ForegroundColor Magenta
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Análisis de Redes         " -NoNewline
-    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Restablecer TCP/IP         " -NoNewline
+    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Diagnóstico de Hardware    " -NoNewline
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 11"
     
-    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Liberar Dirección IP      " -NoNewline
-    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Conexiones de Red          " -NoNewline
+    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 02                 " -NoNewline
+    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 07                 " -NoNewline
     Write-Host "[12] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 12"
     
-    Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Renovar Dirección IP      " -NoNewline
-    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Ping Continuo (Google)     " -NoNewline
+    Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 03                 " -NoNewline
+    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 08                 " -NoNewline
     Write-Host "[13] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 13"
     
-    Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Vaciar Caché DNS          " -NoNewline
-    Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Ajustes de Red Windows     " -NoNewline
+    Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 04                 " -NoNewline
+    Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 09                 " -NoNewline
     Write-Host "[14] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 14"
     
-    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Restablecer Winsock       " -NoNewline
-    Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Salir del Programa         " -NoNewline
+    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 05                 " -NoNewline
+    Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 10                 " -NoNewline
     Write-Host "[15] " -NoNewline -ForegroundColor Cyan; Write-Host "Módulo 15"
     Write-Host ""
     
@@ -46,53 +57,28 @@ do {
     $choice = Read-Host "INGRESE COMANDO"
 
     switch ($choice) {
-        { $_ -in '1', '01' } {
-            Write-Host "`n[+] Cargando módulo 01..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/01-Redes.ps1 | iex
-            Read-Host "Presione Enter para continuar..."
-        }
-        { $_ -in '2', '02' } {
-            Write-Host "`n[+] Liberando dirección IP actual..." -ForegroundColor Cyan
-            ipconfig /release
-            Write-Host "[!] Dirección IP liberada." -ForegroundColor Magenta
-            Read-Host "Presione Enter para continuar..."
-        }
-        { $_ -in '3', '03' } {
-            Write-Host "`n[+] Solicitando renovación de dirección IP..." -ForegroundColor Cyan
-            ipconfig /renew
-            Write-Host "[!] Dirección IP renovada exitosamente." -ForegroundColor Magenta
-            Read-Host "Presione Enter para continuar..."
-        }
-        { $_ -in '4', '04' } {
-            Write-Host "`n[+] Vaciando la caché del DNS..." -ForegroundColor Cyan
-            Clear-DnsClientCache
-            Write-Host "[!] Caché DNS restablecida con éxito." -ForegroundColor Magenta
-            Read-Host "Presione Enter para continuar..."
-        }
-        { $_ -in '5', '05' } {
-            Write-Host "`n[+] Restableciendo catálogo Winsock..." -ForegroundColor Cyan
-            netsh winsock reset
-            Write-Host "[!] Catálogo Winsock restablecido. (Requiere reiniciar el equipo)." -ForegroundColor Magenta
-            Read-Host "Presione Enter para continuar..."
-        }
-        { $_ -in '6', '06' } {
-            Write-Host "`n[+] Restableciendo pila de protocolos TCP/IP..." -ForegroundColor Cyan
-            netsh int ip reset
-            Write-Host "[!] Protocolo TCP/IP restablecido." -ForegroundColor Magenta
-            Read-Host "Presione Enter para continuar..."
-        }
-        { $_ -in '7', '07' } {
-            Write-Host "`n[+] Abriendo panel de Conexiones de Red..." -ForegroundColor Cyan
-            ncpa.cpl
-        }
-        { $_ -in '8', '08' } {
-            Write-Host "`n[+] Iniciando prueba de latencia continua (Ctrl + C para detener)..." -ForegroundColor Cyan
-            ping google.com -t
-        }
-        { $_ -in '9', '09' } {
-            Write-Host "`n[+] Abriendo la Configuración de Red de Windows..." -ForegroundColor Cyan
-            Start-Process ms-settings:network
-        }
+        # --- COLUMNA 1 ---
+        { $_ -in '1', '01' } { Cargar-Modulo "01-Redes.ps1" }
+        { $_ -in '2', '02' } { Cargar-Modulo "02.ps1" }
+        { $_ -in '3', '03' } { Cargar-Modulo "03.ps1" }
+        { $_ -in '4', '04' } { Cargar-Modulo "04.ps1" }
+        { $_ -in '5', '05' } { Cargar-Modulo "05.ps1" }
+
+        # --- COLUMNA 2 ---
+        { $_ -in '6', '06' } { Cargar-Modulo "01-Hardware.ps1" } # O puedes nombrarlo 06.ps1 según prefieras
+        { $_ -in '7', '07' } { Cargar-Modulo "07.ps1" }
+        { $_ -in '8', '08' } { Cargar-Modulo "08.ps1" }
+        { $_ -in '9', '09' } { Cargar-Modulo "09.ps1" }
+        '10'                 { Cargar-Modulo "10.ps1" }
+
+        # --- COLUMNA 3 ---
+        '11'                 { Cargar-Modulo "11.ps1" }
+        '12'                 { Cargar-Modulo "12.ps1" }
+        '13'                 { Cargar-Modulo "13.ps1" }
+        '14'                 { Cargar-Modulo "14.ps1" }
+        '15'                 { Cargar-Modulo "15.ps1" }
+
+        # --- SALIR ---
         { $_ -in '10', '0', '00' } {
             return
         }
