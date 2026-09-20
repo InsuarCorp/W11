@@ -12,7 +12,7 @@ $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notli
 # Obtener Procesos, Subprocesos (Threads) e Identificadores (Handles)
 $allProcesses = Get-Process
 $processCount = $allProcesses.Count
-$threadCount = ($allProcesses | Measure-Object -Property Threads -Sum).Sum
+$threadCount = ($allProcesses.Threads).Count
 $handleCount = ($allProcesses | Measure-Object -Property Handles -Sum).Sum
 
 # Mostrar en consola
