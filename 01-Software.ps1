@@ -37,14 +37,18 @@ do {
     Write-Host ""
     Write-Host ""
 
-    Write-Host "[00] VOLVER AL MENU PRINCIPAL" -ForegroundColor Yellow
+    Write-Host "[0]  VOLVER AL MENU PRINCIPAL" -ForegroundColor Yellow
+    Write-Host "[00] FINALIZAR SESION" -ForegroundColor Red
     Write-Host ""
 
     # Lectura de opciones multiples
     $inputRaw = Read-Host "INGRESE COMANDO(S) (ej: 1 3 5 o 01,03,05)"
 
-    # Limpia ceros a la izquierda y espacios para normalizar la entrada (ej: '02' -> '2')
-    $choices =$inputRaw -split '[\s,]+' | Where-Object { $_ -ne "" } \vert{} ForEach-Object { $_.TrimStart('0').Trim() }
+    # Mantiene los ceros para diferenciar '0' de '00', pero quita ceros a otros numeros (ej: '02' -> '2')
+    $choices = $inputRaw -split '[\s,]+' \vert{} Where-Object {$_ -ne "" } | ForEach-Object { 
+        $t =$_.Trim()
+        if ($t -match '^0[1-9]\d*$') { $t.TrimStart('0') } else {$t }
+    }
 
     foreach ($choice in$choices) {
 
@@ -179,12 +183,10 @@ do {
                 return
             }
 
-            "" {
-                # Maneja Enter vacio o '00' (ya que TrimStart convierte '00' en vacio)
-                Write-Host "`n[+] Regresando al menu principal..." -ForegroundColor Yellow
+            "00" {
+                Write-Host "`n[+] Finalizando sesion..." -ForegroundColor Red
                 Start-Sleep -Seconds 1
-                irm https://raw.githubusercontent.com/InsuarCorp/W11/main/00-Menu.ps1 | iex
-                return
+                exit
             }
 
             Default {
