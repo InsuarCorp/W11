@@ -9,6 +9,13 @@ $ram = [math]::Round($ramBytes / 1GB, 1)
 $hostName = $env:COMPUTERNAME
 $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike "169.254*" -and $_.IPAddress -ne "127.0.0.1" } | Select-Object -First 1).IPAddress
 
-# Mostrar en 2 líneas
+# Obtener Procesos, Subprocesos (Threads) e Identificadores (Handles)
+$allProcesses = Get-Process
+$processCount = $allProcesses.Count
+$threadCount = ($allProcesses | Measure-Object -Property Threads -Sum).Sum
+$handleCount = ($allProcesses | Measure-Object -Property Handles -Sum).Sum
+
+# Mostrar en consola
 Write-Host "Procesador: $cpu | RAM: ${ram} GB" -ForegroundColor Cyan
 Write-Host "Host: $hostName | IP: $ip" -ForegroundColor Magenta
+Write-Host "Procesos: $processCount | Subprocesos: $threadCount | Identificadores: $handleCount" -ForegroundColor Yellow
