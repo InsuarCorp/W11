@@ -44,9 +44,9 @@ do {
     $inputRaw = Read-Host "INGRESE COMANDO(S) (ej: 1 3 5 o 01,03,05)"
 
     # Limpia ceros a la izquierda y espacios para normalizar la entrada (ej: '02' -> '2')
-    $choices = $inputRaw -split '[\s,]+' | Where-Object { $_ -ne "" } | ForEach-Object { $_.TrimStart('0').Trim() }
+    $choices =$inputRaw -split '[\s,]+' | Where-Object { $_ -ne "" } \vert{} ForEach-Object { $_.TrimStart('0').Trim() }
 
-    foreach ($choice in $choices) {
+    foreach ($choice in$choices) {
 
         switch ($choice) {
             "1" {
@@ -106,7 +106,7 @@ do {
                     "Microsoft.VCRedist.2015+.x86", "Microsoft.VCRedist.2015+.x64"
                 )
 
-                foreach ($package in $vcPackages) {
+                foreach ($package in$vcPackages) {
                     Write-Host "[+] Procesando: $package" -ForegroundColor Yellow
                     winget install --id $package --silent --accept-package-agreements --accept-source-agreements
                 }
@@ -159,7 +159,7 @@ do {
                 Write-Host ""
                 Write-Host "[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
                 $bootTime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
-                $uptime = (Get-Date) - $bootTime
+                $uptime = (Get-Date) -$bootTime
                 Write-Host "El sistema inicio el: $bootTime" -ForegroundColor Yellow
                 Write-Host "Tiempo encendido: $($uptime.Days) dias, $($uptime.Hours) horas, $($uptime.Minutes) minutos" -ForegroundColor Green
                 Start-Sleep -Seconds 1
@@ -172,7 +172,18 @@ do {
                 Start-Sleep -Seconds 1
             }
 
+            "0" {
+                Write-Host "`n[+] Regresando al menu principal..." -ForegroundColor Yellow
+                Start-Sleep -Seconds 1
+                irm https://raw.githubusercontent.com/InsuarCorp/W11/main/00-Menu.ps1 | iex
+                return
+            }
+
             "" {
+                # Maneja Enter vacio o '00' (ya que TrimStart convierte '00' en vacio)
+                Write-Host "`n[+] Regresando al menu principal..." -ForegroundColor Yellow
+                Start-Sleep -Seconds 1
+                irm https://raw.githubusercontent.com/InsuarCorp/W11/main/00-Menu.ps1 | iex
                 return
             }
 
