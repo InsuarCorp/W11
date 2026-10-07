@@ -20,6 +20,15 @@ Write-Host "Procesador: $cpu | RAM: ${ram} GB" -ForegroundColor Cyan
 Write-Host "Host: $hostName | IP: $ip" -ForegroundColor Magenta
 Write-Host "Procesos: $processCount | Subprocesos: $threadCount | Identificadores: $handleCount" -ForegroundColor Yellow
 
+  Write-Host ""
+                Write-Host "[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
+                $bootTime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+                $uptime = (Get-Date) - $bootTime
+                Write-Host "El sistema inicio el: $bootTime" -ForegroundColor Yellow
+                Write-Host "Tiempo encendido: $($uptime.Days) dias, $($uptime.Hours) horas, $($uptime.Minutes) minutos" -ForegroundColor Green
+                Start-Sleep -Seconds 1
+
+                
  Write-Host "========================================================================================" -ForegroundColor Yellow
  Write-Host "                                     Insuar Corp        V26.10                          " -ForegroundColor Yellow
  Write-Host "========================================================================================" -ForegroundColor Yellow
