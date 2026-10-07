@@ -20,7 +20,6 @@ Write-Host "Procesador: $cpu | RAM: ${ram} GB" -ForegroundColor Cyan
 Write-Host "Host: $hostName | IP: $ip" -ForegroundColor Magenta
 Write-Host "Procesos: $processCount | Subprocesos: $threadCount | Identificadores: $handleCount" -ForegroundColor Yellow
 
-  Write-Host ""
                 Write-Host "[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
                 $bootTime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
                 $uptime = (Get-Date) - $bootTime
