@@ -8,12 +8,8 @@ do {
     irm https://raw.githubusercontent.com/InsuarCorp/W11/main/info.ps1 | iex
     Write-Host ""
 
-    Write-Host "========================================================================================" -ForegroundColor Yellow
-    Write-Host "                                     Insuar Corp                                        " -ForegroundColor Yellow
-    Write-Host "========================================================================================" -ForegroundColor Yellow
-
     Write-Host "========================================================================================" -ForegroundColor Magenta
-    Write-Host "                             [ Instalacion de SoftWare V 26.09 ]                        " -ForegroundColor Magenta
+    Write-Host "                             [     Instalacion de SoftWare     ]                        " -ForegroundColor Magenta
     Write-Host "========================================================================================" -ForegroundColor Magenta
     Write-Host ""
     
