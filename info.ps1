@@ -1,3 +1,4 @@
+clear
 # Obtener CPU
 $cpu = (Get-CimInstance Win32_Processor).Name.Trim()
 
