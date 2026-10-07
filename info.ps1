@@ -6,6 +6,9 @@ $cpu = (Get-CimInstance Win32_Processor).Name.Trim()
 $ramBytes = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum
 $ram = [math]::Round($ramBytes / 1GB, 1)
 
+# Procesadores Activos
+$p = Get-CimInstance Win32_Processor; $numproc = (bcdedit /enum {current} | Select-String "numproc") -replace '[^\d]'; $activos = if ($numproc) { [int]$numproc } else { $p.NumberOfLogicalProcessors }; "Procesadores activos: $activos/$($p.NumberOfLogicalProcessors)"
+
 # Obtener Host e IP
 $hostName = $env:COMPUTERNAME
 $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike "169.254*" -and $_.IPAddress -ne "127.0.0.1" } | Select-Object -First 1).IPAddress
