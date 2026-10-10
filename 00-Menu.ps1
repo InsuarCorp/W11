@@ -17,6 +17,7 @@ do {
     # Opciones alineadas
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "SoftWare   " -NoNewline
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Hardware   " -NoNewline
+    Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  -NoNewline
     Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  -NoNewline
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
    
@@ -38,13 +39,19 @@ do {
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '3', '03' } {
-            Write-Host "`n[+] Cargando modulo 03 (Windows)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/03-Windows.ps1 | iex
+            Write-Host "`n[+] Cargando modulo 03 (Drivers)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/03-Driver.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        { $_ -in '4', '04' } {
-            Write-Host "`n[+] Cargando modulo 04 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/04-Tweak.ps1 | iex
+        $_ -in '3', '04' } {
+            Write-Host "`n[+] Cargando modulo 04 (Windows)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/04
+        -Windows.ps1 | iex
+            Read-Host "Presione Enter para continuar..."
+        }
+        { $_ -in '4', '05' } {
+            Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/05-Tweak.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '0', '00' } {
