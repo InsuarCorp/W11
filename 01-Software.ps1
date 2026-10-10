@@ -1,4 +1,4 @@
-﻿# Configuracion del titulo de la ventana
+# Configuracion del titulo de la ventana
 $host.UI.RawUI.WindowTitle = "InsuarCorp - Instalacion de Software para W11"
 
 do {
