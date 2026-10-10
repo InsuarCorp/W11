@@ -1,5 +1,5 @@
 # Configuración del título de la ventana
-$host.UI.RawUI.WindowTitle = "SISTEMA // HERRAMIENTAS DE RED"
+$host.UI.RawUI.WindowTitle = "InsuarCorp"
 
 # Bucle principal para mantener el menú abierto
 do {
