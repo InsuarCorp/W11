@@ -3,7 +3,8 @@ function Mostrar-Menu {
     Write-Host "==================================================" -ForegroundColor Cyan
     Write-Host "      MENU DE GESTION Y DIAGNOSTICO DE DRIVERS     " -ForegroundColor Cyan
     Write-Host "==================================================" -ForegroundColor Cyan
-    
+
+
     Write-Host "=========================================================" -ForegroundColor white
     Write-Host "      Si Windows bloquea la ejecucion del script por     " -ForegroundColor white
     Write-Host "       politicas de seguridad, abre PowerShell como      " -ForegroundColor white
