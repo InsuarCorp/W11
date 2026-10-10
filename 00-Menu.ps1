@@ -43,13 +43,12 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/03-Driver.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        $_ -in '3', '04' } {
+        { $_ -in '4', '04' } {
             Write-Host "`n[+] Cargando modulo 04 (Windows)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/04
-        -Windows.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/04-Windows.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        { $_ -in '4', '05' } {
+        { $_ -in '5', '05' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/05-Tweak.ps1 | iex
             Read-Host "Presione Enter para continuar..."
