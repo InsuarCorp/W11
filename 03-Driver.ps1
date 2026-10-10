@@ -11,15 +11,13 @@ function Mostrar-Menu {
     Write-Host "           Set-ExecutionPolicy Unrestricted -Scope       " -ForegroundColor green
     Write-Host "=========================================================" -ForegroundColor white   
 
-
-
-   Write-Host "1. Instalar drivers (via Windows Update)" -ForegroundColor White
-    Write-Host "2. Realizar Backup de drivers (en C:\DriverBackup)" -ForegroundColor White
-    Write-Host "3. Mostrar estado actual en tiempo real (verifier /volatile /query)" -ForegroundColor White
-    Write-Host "5. Mostrar configuracion guardada (verifier /querysetting)" -ForegroundColor White
-    Write-Host "6. Mostrar informacion general del estado (verifier /query)" -ForegroundColor White
-    Write-Host "7. Restablecer / Desactivar Driver Verifier (verifier /reset)" -ForegroundColor White
-    Write-Host "0. Salir" -ForegroundColor Yellow
+    Write-Host "[01]. Instalar drivers (via Windows Update)" -ForegroundColor White
+    Write-Host "[02]. Realizar Backup de drivers (en C:\DriverBackup)" -ForegroundColor White
+    Write-Host "[03]. Mostrar estado actual en tiempo real (verifier /volatile /query)" -ForegroundColor White
+    Write-Host "[05]. Mostrar configuracion guardada (verifier /querysetting)" -ForegroundColor White
+    Write-Host "[06]. Mostrar informacion general del estado (verifier /query)" -ForegroundColor White
+    Write-Host "[07]. Restablecer / Desactivar Driver Verifier (verifier /reset)" -ForegroundColor White
+    Write-Host "[00]. Salir" -ForegroundColor Yellow
     Write-Host "==================================================" -ForegroundColor Cyan
 }
 
