@@ -53,6 +53,11 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/05-Tweak.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
+
+       { $_ -in 'a', 'A' } {
+          Get-Content Ayuda.txt | Out-GridView
+        }
+        
         { $_ -in '0', '00' } {
             return
         }
