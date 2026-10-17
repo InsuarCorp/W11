@@ -20,7 +20,7 @@ do {
     Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  -NoNewline
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  -NoNewline
     Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
-   
+    Write-Host "[A] "  -NoNewline -ForegroundColor Cyan; Write-Host "Ayuda"
     Write-Host ""
     Write-Host "[00] FINALIZAR SESION" -ForegroundColor Yellow
     Write-Host ""
