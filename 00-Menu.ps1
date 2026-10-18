@@ -59,37 +59,24 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-     { $_ -in 'A' } {
-            Write-Host "`n[+] Verificando y cargando Ayuda..." -ForegroundColor Cyan
+     
+        { $_ -in 'A' } {
+            Write-Host "`n[+] Abriendo ventana de Ayuda..." -ForegroundColor Cyan
             $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
-            $helpContent = ""
-
-            # Si no existe localmente, lo descarga de la web (autoinstalación/recuperación)
+            
+            # Si no existe localmente, lo descarga de la web y lo guarda
             if (-not (Test-Path $AyudaPath)) {
                 try {
-                    $helpContent = (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt)
-                    # Opcional: lo guarda localmente para futuras ejecuciones
-                    $helpContent | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
+                    $helpText = (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt)
+                    $helpText | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
                 } catch {
-                    $helpContent = "No se pudo descargar el archivo de ayuda desde el repositorio."
+                    $helpText = "No se pudo descargar el archivo de ayuda."
+                    $helpText | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
                 }
-            } else {
-                $helpContent = Get-Content $AyudaPath -Raw
             }
 
-            # Abre una NUEVA ventana de PowerShell independiente mostrando la ayuda
-            Start-Process powershell -ArgumentList "-NoExit", "-Command", "
-                `$host.UI.RawUI.WindowTitle = 'Ayuda - InsuarCorp';
-                Clear-Host;
-                Write-Host '========================================================================' -ForegroundColor Cyan;
-                Write-Host '                         [  AYUDA DEL SISTEMA  ]                        ' -ForegroundColor Cyan;
-                Write-Host '========================================================================' -ForegroundColor Cyan;
-                Write-Host '';
-                Write-Host '$helpContent';
-                Write-Host '';
-                Write-Host '========================================================================' -ForegroundColor Cyan;
-                Read-Host 'Presione Enter para cerrar esta ventana...'
-            "
+            # Lanza la ventana gráfica tradicional (Out-GridView) en un proceso hijo independiente
+            Start-Process powershell -ArgumentList "-Command", "Get-Content '$AyudaPath' | Out-GridView -Title 'Ayuda - InsuarCorp' -Wait"
         }
         
         { $_ -in '0', '00' } {
