@@ -20,7 +20,7 @@ do {
     Write-Host "[30] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  -NoNewline
     Write-Host "[40] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  -NoNewline
     Write-Host "[50] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
-    Write-Host "[100] " -NoNewline -ForegroundColor Cyan; Write-Host "Analizar"
+    Write-Host "[100] " -NoNewline -ForegroundColor Cyan; Write-Host "Analizar este Github"
     Write-Host "[A] "  -NoNewline -ForegroundColor Cyan; Write-Host "Ayuda"
     Write-Host ""
     Write-Host "[00] FINALIZAR SESION" -ForegroundColor Yellow
