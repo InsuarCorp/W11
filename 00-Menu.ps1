@@ -55,7 +55,7 @@ do {
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '100' } {
-            Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
+            Write-Host "`n[+] Analizando Repositorio..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
@@ -67,6 +67,7 @@ do {
               # Fallback por si se ejecuta por red pura
               (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-GridView
            Start-Sleep -Seconds 5
+           Read-Host "Presione Enter para continuar..."
           }
         }
         
