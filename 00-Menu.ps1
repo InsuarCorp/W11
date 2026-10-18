@@ -56,7 +56,7 @@ do {
         }
         { $_ -in '100' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analizar.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
        { $_ -in 'A' } {
