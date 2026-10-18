@@ -3,7 +3,7 @@
     Analizador estático de seguridad para los scripts del repositorio W11.
 #>
 
-$files = Get-ChildItem -Recurse -Include *.ps1, *.bat
+$files = Get-ChildItem -Path $PSScriptRoot -Recurse -Include *.ps1, *.bat
 $totalFiles = 0
 $riskFound = 0
 
