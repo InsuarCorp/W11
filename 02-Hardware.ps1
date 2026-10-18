@@ -65,6 +65,7 @@ do {
         { $_ -in '6', '06' } {
             Write-Host "`n[+] Obteniendo Informacion de Discos de Almacenamiento..." -ForegroundColor Cyan
             Get-PhysicalDisk | Select-Object DeviceId, FriendlyName, MediaType, OperationalStatus, Size | Format-Table -AutoSize
+            fsutil behavior query DisableDeleteNotify
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '7', '07' } {
