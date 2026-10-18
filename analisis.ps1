@@ -1,15 +1,18 @@
-<#
+<# 
 .SYNOPSIS
     Analizador estático de seguridad para los scripts del repositorio W11.
 #>
 
 $files = Get-ChildItem -Recurse -Include *.ps1, *.bat
-$totalFiles = 0$riskFound = 0
+$totalFiles = 0
+$riskFound = 0
 
 Write-Host "`n[+] Analizando seguridad y confiabilidad del repositorio W11...`n" -ForegroundColor Cyan
 
-foreach ($file in$files) {
-    $totalFiles++$content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue$issues = @()
+foreach ($file in $files) {
+    $totalFiles++
+    $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
+    $issues = @()
 
     # Patrones comunes de riesgo o comandos delicados a revisar
     if ($content -match 'Invoke-WebRequest.*http://' -or $content -match 'curl.*http://') {$issues += "Uso de HTTP inseguro (descarga sin cifrado TLS)."
@@ -29,7 +32,7 @@ foreach ($file in$files) {
     } else {
         $riskFound++
         Write-Host " [ATENCIÓN] $($file.Name) -> Contiene elementos que requieren revisión:" -ForegroundColor Yellow
-        foreach ($issue in$issues) {
+        foreach ($issue in $issues) {
             Write-Host "    - $issue" -ForegroundColor DarkYellow
         }
     }
