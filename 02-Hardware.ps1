@@ -27,7 +27,7 @@ do {
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir Carpeta de Reportes"
     
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
-    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Tril SSD/M2       "
+    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Trim SSD/M2       "
     Write-Host ""
     
     Write-Host "[0]  VOLVER AL MENU PRINCIPAL" -ForegroundColor Yellow
@@ -75,11 +75,7 @@ do {
             
         }
         { $_ -in '8', '08' } {
-            Write-Host "`n[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
-            $bootTime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
-            $uptime = (Get-Date) - $bootTime
-            Write-Host "El sistema inicio el: $bootTime" -ForegroundColor Yellow
-            Write-Host "Tiempo encendido: $($uptime.Days) dias, $($uptime.Hours) horas, $($uptime.Minutes) minutos" -ForegroundColor Green
+            fsutil behavior set DisableDeleteNotify 0
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '9', '09' } {
