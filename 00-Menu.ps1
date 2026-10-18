@@ -31,32 +31,32 @@ do {
     switch ($choice) {
         { $_ -in '10' } {
             Write-Host "`n[+] Cargando modulo 01 (Software)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/01-Software.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/10-Software.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '20' } {
             Write-Host "`n[+] Cargando modulo 02 (Hardware)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/02-Hardware.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/20-Hardware.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '30' } {
             Write-Host "`n[+] Cargando modulo 03 (Drivers)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/03-Driver.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/30-Driver.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '40' } {
             Write-Host "`n[+] Cargando modulo 04 (Windows)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/04-Windows.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/40-Windows.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '50' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/05-Tweak.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/50-Tweak.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '100' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/analisis.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
        { $_ -in 'A' } {
