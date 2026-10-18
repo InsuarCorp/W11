@@ -66,6 +66,7 @@ do {
           } else {
               # Fallback por si se ejecuta por red pura
               (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-GridView
+           Start-Sleep -Seconds 5
           }
         }
         
