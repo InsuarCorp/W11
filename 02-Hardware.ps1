@@ -27,7 +27,7 @@ do {
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir Carpeta de Reportes"
     
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
-    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Tiempo de Actividad (Uptime)"
+    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Tril SSD/M2       "
     Write-Host ""
     
     Write-Host "[0]  VOLVER AL MENU PRINCIPAL" -ForegroundColor Yellow
