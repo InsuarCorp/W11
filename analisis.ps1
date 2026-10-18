@@ -8,7 +8,7 @@ $totalFiles = 0$riskFound = 0
 
 Write-Host "`n[+] Analizando seguridad y confiabilidad del repositorio W11...`n" -ForegroundColor Cyan
 
-foreach ($file in $files) {
+foreach ($file in$files) {
     $totalFiles++$content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue$issues = @()
 
     # Patrones comunes de riesgo o comandos delicados a revisar
