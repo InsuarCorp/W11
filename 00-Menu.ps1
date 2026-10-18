@@ -59,16 +59,37 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-      { $_ -in 'A' } {
-          $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
-          if (Test-Path $AyudaPath) {
-              Get-Content $AyudaPath | Out-GridView
-          } else {
-              # Fallback por si se ejecuta por red pura
-              (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-GridView
-           Start-Sleep -Seconds 5
-           Read-Host "Presione Enter para continuar..."
-          }
+     { $_ -in 'A' } {
+            Write-Host "`n[+] Verificando y cargando Ayuda..." -ForegroundColor Cyan
+            $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
+            $helpContent = ""
+
+            # Si no existe localmente, lo descarga de la web (autoinstalación/recuperación)
+            if (-not (Test-Path $AyudaPath)) {
+                try {
+                    $helpContent = (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt)
+                    # Opcional: lo guarda localmente para futuras ejecuciones
+                    $helpContent | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
+                } catch {
+                    $helpContent = "No se pudo descargar el archivo de ayuda desde el repositorio."
+                }
+            } else {
+                $helpContent = Get-Content $AyudaPath -Raw
+            }
+
+            # Abre una NUEVA ventana de PowerShell independiente mostrando la ayuda
+            Start-Process powershell -ArgumentList "-NoExit", "-Command", "
+                `$host.UI.RawUI.WindowTitle = 'Ayuda - InsuarCorp';
+                Clear-Host;
+                Write-Host '========================================================================' -ForegroundColor Cyan;
+                Write-Host '                         [  AYUDA DEL SISTEMA  ]                        ' -ForegroundColor Cyan;
+                Write-Host '========================================================================' -ForegroundColor Cyan;
+                Write-Host '';
+                Write-Host '$helpContent';
+                Write-Host '';
+                Write-Host '========================================================================' -ForegroundColor Cyan;
+                Read-Host 'Presione Enter para cerrar esta ventana...'
+            "
         }
         
         { $_ -in '0', '00' } {
