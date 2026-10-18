@@ -59,23 +59,13 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-     { $_ -in 'a', 'A' } {
-            Write-Host "`n[+] Abriendo ventana de Ayuda..." -ForegroundColor Cyan
-            
-            # Busca el archivo localmente o lo descarga si falta
-            $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
-            if (-not (Test-Path $AyudaPath)) {
-                try {
-                    (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
-                } catch {
-                    # Fallback por si acaso en ruta temporal actual
-                    $AyudaPath = "Ayuda.txt"
-                }
-            }
 
-            # Tu misma línea original pero asegurando la ruta correcta del archivo
-            Get-Content $AyudaPath | Out-GridView -Title "Ayuda - InsuarCorp"
-        }       
+{ $_ -in 'a', 'A' } {
+          Get-Content  https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt | Out-GridView
+        }
+
+
+     
         { $_ -in '0', '00' } {
             return
         }
