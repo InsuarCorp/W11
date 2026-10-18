@@ -23,7 +23,7 @@ do {
     Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Generar Reporte Completo"
     
     Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de RAM        " -NoNewline
-    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Discos    " -NoNewline
+    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Discos     " -NoNewline
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir Carpeta de Reportes"
     
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
