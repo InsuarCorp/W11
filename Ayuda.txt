@@ -26,9 +26,9 @@
 [03] Informacion de RAM               
 [04] Informacion de GPU        
 [05] Informacion del BIOS 
-[06] Informacion de Discos
-[07] Informacion de Red 
-[08] Tiempo de Actividad (Uptime)
+[06] Informacion de Red 
+[07] Informacion de Discos
+[08] Activar Trim SSD/M2
 [09] Estado del Sistema
 [10] Generar Reporte Completo
 [11] Abrir Carpeta de Reportes
