@@ -59,26 +59,23 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-     
-        { $_ -in 'A' } {
+     { $_ -in 'a', 'A' } {
             Write-Host "`n[+] Abriendo ventana de Ayuda..." -ForegroundColor Cyan
-            $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
             
-            # Si no existe localmente, lo descarga de la web y lo guarda
+            # Busca el archivo localmente o lo descarga si falta
+            $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
             if (-not (Test-Path $AyudaPath)) {
                 try {
-                    $helpText = (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt)
-                    $helpText | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
+                    (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
                 } catch {
-                    $helpText = "No se pudo descargar el archivo de ayuda."
-                    $helpText | Out-File -FilePath $AyudaPath -Encoding utf8 -ErrorAction SilentlyContinue
+                    # Fallback por si acaso en ruta temporal actual
+                    $AyudaPath = "Ayuda.txt"
                 }
             }
 
-            # Lanza la ventana gráfica tradicional (Out-GridView) en un proceso hijo independiente
-            Start-Process powershell -ArgumentList "-Command", "Get-Content '$AyudaPath' | Out-GridView -Title 'Ayuda - InsuarCorp' -Wait"
-        }
-        
+            # Tu misma línea original pero asegurando la ruta correcta del archivo
+            Get-Content $AyudaPath | Out-GridView -Title "Ayuda - InsuarCorp"
+        }       
         { $_ -in '0', '00' } {
             return
         }
