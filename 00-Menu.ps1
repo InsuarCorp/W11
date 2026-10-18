@@ -20,6 +20,7 @@ do {
     Write-Host "[30] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  -NoNewline
     Write-Host "[40] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  -NoNewline
     Write-Host "[50] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
+    Write-Host "[100] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
     Write-Host "[A] "  -NoNewline -ForegroundColor Cyan; Write-Host "Ayuda"
     Write-Host ""
     Write-Host "[00] FINALIZAR SESION" -ForegroundColor Yellow
@@ -53,7 +54,11 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/05-Tweak.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-
+        { $_ -in '100' } {
+            Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analizar.ps1 | iex
+            Read-Host "Presione Enter para continuar..."
+        }
        { $_ -in 'A' } {
           Get-Content Ayuda.txt | Out-GridView
         }
