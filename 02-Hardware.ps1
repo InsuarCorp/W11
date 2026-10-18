@@ -19,11 +19,11 @@ do {
     Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Estado del Sistema"
     
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de CPU        " -NoNewline
-    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Discos     " -NoNewline
+    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Red        " -NoNewline
     Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Generar Reporte Completo"
     
     Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de RAM        " -NoNewline
-    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Red        " -NoNewline
+    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Discos    " -NoNewline
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir Carpeta de Reportes"
     
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
@@ -63,15 +63,16 @@ do {
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '6', '06' } {
-            Write-Host "`n[+] Obteniendo Informacion de Discos de Almacenamiento..." -ForegroundColor Cyan
-            Get-PhysicalDisk | Select-Object DeviceId, FriendlyName, MediaType, OperationalStatus, Size | Format-Table -AutoSize
-            fsutil behavior query DisableDeleteNotify
+         Write-Host "`n[+] Obteniendo Informacion de Adaptadores de Red..." -ForegroundColor Cyan
+            Get-NetAdapter | Select-Object Name, InterfaceDescription, Status, LinkSpeed | Format-Table -AutoSize
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '7', '07' } {
-            Write-Host "`n[+] Obteniendo Informacion de Adaptadores de Red..." -ForegroundColor Cyan
-            Get-NetAdapter | Select-Object Name, InterfaceDescription, Status, LinkSpeed | Format-Table -AutoSize
+         Write-Host "`n[+] Obteniendo Informacion de Discos de Almacenamiento..." -ForegroundColor Cyan
+            Get-PhysicalDisk | Select-Object DeviceId, FriendlyName, MediaType, OperationalStatus, Size | Format-Table -AutoSize
+            fsutil behavior query DisableDeleteNotify
             Read-Host "Presione Enter para continuar..."
+            
         }
         { $_ -in '8', '08' } {
             Write-Host "`n[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
