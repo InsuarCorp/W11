@@ -59,8 +59,14 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-       { $_ -in 'A' } {
-          Get-Content Ayuda.txt | Out-GridView
+      { $_ -in 'A' } {
+          $AyudaPath = Join-Path $PSScriptRoot "Ayuda.txt"
+          if (Test-Path $AyudaPath) {
+              Get-Content $AyudaPath | Out-GridView
+          } else {
+              # Fallback por si se ejecuta por red pura
+              (irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-GridView
+          }
         }
         
         { $_ -in '0', '00' } {
