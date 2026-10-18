@@ -53,8 +53,8 @@
 [04] Windows   
 ========================================================================================
 
-reiniciar modo seguro
-quitar spam navegadores
+[01] reiniciar modo seguro
+[02] quitar spam navegadores
 
 
 
@@ -62,9 +62,9 @@ quitar spam navegadores
 [05] Tweak
 ========================================================================================
 
-telemetria
-BitLocker
-animaciones
-botware
+[01] telemetria
+[02] BitLocker
+[03] animaciones
+[04] botware
 
 
