@@ -19,6 +19,9 @@ do {
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetria   "  -NoNewline
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "W   "  -NoNewline
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "T"
+        Write-Host ""
+        Write-Host ""
+        Write-Host ""
     Write-Host "[100] " -NoNewline -ForegroundColor Cyan; Write-Host "Analizar este Github"
     Write-Host "[A] "  -NoNewline -ForegroundColor Cyan; Write-Host "Ayuda"
     Write-Host ""
