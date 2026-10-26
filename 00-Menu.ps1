@@ -65,7 +65,7 @@ do {
         }
 
 { $_ -in 'a', 'A' } {
-          Get-Content  https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt | Out-GridView
+(irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt) | Out-GridView 
         }
 
 
