@@ -15,11 +15,15 @@ do {
     Write-Host ""
     
     # Opciones alineadas
-    Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "SoftWare   " -NoNewline
-    Write-Host "[20] " -NoNewline -ForegroundColor Cyan; Write-Host "Hardware   " -NoNewline
-    Write-Host "[30] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  -NoNewline
-    Write-Host "[40] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  -NoNewline
+    Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "SoftWare   " 
+    Write-Host "[20] " -NoNewline -ForegroundColor Cyan; Write-Host "Hardware   " 
+    Write-Host "[30] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  
+    Write-Host "[40] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  
     Write-Host "[50] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
+    Write-Host ""
+    Write-Host ""
+    Write-Host ""
+     
     Write-Host "[100] " -NoNewline -ForegroundColor Cyan; Write-Host "Analizar este Github"
     Write-Host "[A] "  -NoNewline -ForegroundColor Cyan; Write-Host "Ayuda"
     Write-Host ""
