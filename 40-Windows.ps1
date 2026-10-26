@@ -28,27 +28,27 @@ do {
     $choice = Read-Host "INGRESE COMANDO"
 
     switch ($choice) {
-        { $_ -in '10' } {
+        { $_ -in '1' } {
             Write-Host "`n[+] Cargando modulo 01 (Software)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/1-Software.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        { $_ -in '20' } {
+        { $_ -in '2' } {
             Write-Host "`n[+] Cargando modulo 02 (Hardware)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/2-Hardware.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        { $_ -in '30' } {
+        { $_ -in '3' } {
             Write-Host "`n[+] Cargando modulo 03 (Drivers)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/0403-Telemetria.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        { $_ -in '40' } {
+        { $_ -in '4' } {
             Write-Host "`n[+] Cargando modulo 04 (Windows)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/40-Windows.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-        { $_ -in '50' } {
+        { $_ -in '5' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/50-Tweak.ps1 | iex
             Read-Host "Presione Enter para continuar..."
