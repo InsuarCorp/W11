@@ -20,7 +20,7 @@ do {
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar DirectX Runtime"
     Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar .NET 3.5, DirectPlay e instalar .NET 8 Desktop"
     Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar Java Runtime Environment (JRE)"
-    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Tiempo de Actividad (Uptime)"
+    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar 1 al 6 consecutivo (Propio)"
     Write-Host ""
 
     Write-Host "========================================================================================" -ForegroundColor Green
@@ -152,13 +152,8 @@ do {
             }
 
             "7" {
-                Write-Host ""
-                Write-Host "[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
-                $bootTime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
-                $uptime = (Get-Date) - $bootTime
-                Write-Host "El sistema inicio el: $bootTime" -ForegroundColor Yellow
-                Write-Host "Tiempo encendido: $($uptime.Days) dias, $($uptime.Hours) horas, $($uptime.Minutes) minutos" -ForegroundColor Green
-                Start-Sleep -Seconds 1
+                Write-Host "Instalando todo..."
+                 irm https://raw.githubusercontent.com/InsuarCorp/W11/main/PowerSoft.ps1 | iex
             }
 
             "9" {
