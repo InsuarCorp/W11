@@ -1,9 +1,6 @@
  # Configuracion del titulo de la ventana
 $host.UI.RawUI.WindowTitle = "InsuarCorp - Instalacion de Software para W11"
 
-do {
-    Clear-Host
-
     # Carga ejecutable directo desde el repositorio
     irm https://raw.githubusercontent.com/InsuarCorp/W11/main/info.ps1 | iex
     Write-Host ""
@@ -31,7 +28,7 @@ do {
                 if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
                     Write-Host "[+] Instalando proveedor NuGet de forma automatica..." -ForegroundColor Yellow
                     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ForceBootstrap -Scope CurrentUser -ErrorAction SilentlyContinue
-                }
+
 
                 # Configura repositorio PSGallery como confiable
                 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted -ErrorAction SilentlyContinue
@@ -53,8 +50,6 @@ do {
                 Write-Host ""
                 Write-Host "[OK] Finalizada la actualizacion de Drivers." -ForegroundColor Green
                 Start-Sleep -Seconds 1
-            }
-
           
                 Write-Host ""
                 Write-Host "[+] Instalando paquetes Microsoft Visual C++ Redistributables (x86 y x64)..." -ForegroundColor Cyan
@@ -66,12 +61,12 @@ do {
                     "Microsoft.VCRedist.2012.x86", "Microsoft.VCRedist.2012.x64",
                     "Microsoft.VCRedist.2013.x86", "Microsoft.VCRedist.2013.x64",
                     "Microsoft.VCRedist.2015+.x86", "Microsoft.VCRedist.2015+.x64"
-                )
+ )
 
                 foreach ($package in $vcPackages) {
                     Write-Host "[+] Procesando: $package" -ForegroundColor Yellow
                     winget install --id $package --silent --accept-package-agreements --accept-source-agreements
-                }
+               }
 
                 Write-Host ""
                 Write-Host "[OK] Instalacion de paquetes VCRedist completada." -ForegroundColor Green
