@@ -59,10 +59,12 @@ Write-Host "====================================================================
 
 Write-Host " " -ForegroundColor Cyan
 Write-Host " " -ForegroundColor Cyan
-Write-Host "========================================================================================" -ForegroundColor Red
-Write-Host "                                 Activar Permisos de ejecucion                          " -ForegroundColor Red
-Write-Host "          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser          " -ForegroundColor Red
-Write-Host "========================================================================================" -ForegroundColor Red
-
+Write-Host "=======================================================================" -ForegroundColor white
+Write-Host "             Si Windows bloquea la ejecucion del script por            " -ForegroundColor white
+Write-Host "              politicas de seguridad, abre PowerShell como             " -ForegroundColor white
+Write-Host "                    Administrador y ejecuta primero                    " -ForegroundColor white
+Write-Host "                  Set-ExecutionPolicy Unrestricted -Scope              " -ForegroundColor green
+Write-Host " Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser  " -ForegroundColor green
+Write-Host "=======================================================================" -ForegroundColor white   
 Write-Host " " -ForegroundColor Cyan
 Write-Host " " -ForegroundColor Cyan
