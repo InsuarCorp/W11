@@ -8,7 +8,8 @@ $banner = @"
 ██║██║ ╚████║███████║╚██████╔╝██║  ██║██║  ██║╚██████╗╚██████╔╝██║  ██║██║     
 ╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     
 "@
-
+Write-Host $banner -ForegroundColor Cyan
+Write-Host ""
 
 # Obtener CPU
 $cpu = (Get-CimInstance Win32_Processor).Name.Trim()
