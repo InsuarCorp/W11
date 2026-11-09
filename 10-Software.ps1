@@ -153,7 +153,7 @@ do {
 
             "7" {
                 Write-Host "Instalando todo..."
-                 irm https://raw.githubusercontent.com/InsuarCorp/W11/main/PowerSoft.ps1 | iex
+                 irm https://raw.githubusercontent.com/InsuarCorp/W11/main/1007-PowerSoft.ps1 | iex
             }
 
             "9" {
