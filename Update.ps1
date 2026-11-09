@@ -1,7 +1,7 @@
 # ==============================================================================
 # Script de Reparación y Reinicio de Windows Update - InsuarCorp
 # ==============================================================================
-
+ 
 # 1. Comprobar si se está ejecutando como Administrador
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "[!] Este script debe ejecutarse como ADMINISTRADOR." -ForegroundColor Red
