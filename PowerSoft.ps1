@@ -28,7 +28,7 @@ Write-Host "[+] Verificando requisitos del sistema para drivers..." -ForegroundC
 if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
     Write-Host "[+] Instalando proveedor NuGet de forma automatica..." -ForegroundColor Yellow
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ForceBootstrap -Scope CurrentUser -ErrorAction SilentlyContinue
-} # <--- LLAVE CORREGIDA AQUÍ
+}
 
 # Configura repositorio PSGallery como confiable
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted -ErrorAction SilentlyContinue
