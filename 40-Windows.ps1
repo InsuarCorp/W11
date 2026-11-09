@@ -43,12 +43,12 @@ do {
         }
         { $_ -in '3' } {
             Write-Host "`n[+] Cargando modulo 03 (Drivers)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/0403-Telemetria.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4003-Telemetria.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '4' } {
             Write-Host "`n[+] Cargando modulo 04 (Windows)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/40-Windows.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4004-Telemetria.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '5' } {
