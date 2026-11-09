@@ -134,4 +134,3 @@ $host.UI.RawUI.WindowTitle = "InsuarCorp - Instalacion de Software para W11"
     Write-Host "==========================================================" -ForegroundColor Yellow
     Read-Host "Presione Enter para volver al menu..."
 
-} while ($true)
