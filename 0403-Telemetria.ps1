@@ -7,7 +7,7 @@ do {
     # Carga ejecutable directo desde el repositorio
     irm https://raw.githubusercontent.com/InsuarCorp/W11/main/info.ps1 | iex
     Write-Host ""
-
+ 
     Write-Host "========================================================================================" -ForegroundColor Magenta
     Write-Host "                               [       Telemetria para W11       ]                          " -ForegroundColor Magenta
     Write-Host "========================================================================================" -ForegroundColor Magenta
