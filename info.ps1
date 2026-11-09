@@ -1,4 +1,7 @@
 clear
+
+clear
+
 function Write-GradientText {
     param(
         [string]$Text,
@@ -6,14 +9,16 @@ function Write-GradientText {
         [int]$EndR = 0,   [int]$EndG = 255, [int]$EndB = 100    # Color final (ej: verde brillante)
     )
 
-    $lines = $Text -split "`r`n`"`r`"|`n"
+    $lines = $Text -split '\r?\n'
     $maxLen = 0
-    foreach ($line in $lines) { if ($line.Length -gt $maxLen) { $maxLen = $line.Length } }
+    foreach ($line in $lines) { 
+        if ($line.Length -gt $maxLen) { $maxLen = $line.Length } 
+    }
     if ($maxLen -eq 0) { $maxLen = 1 }
 
-    for ($i = 0; $i < $lines.Count; $i++) {
+    for ($i = 0; $i -lt $lines.Count; $i++) {
         $line = $lines[$i]
-        for ($j = 0; $j < $line.Length; $j++) {
+        for ($j = 0; $j -lt $line.Length; $j++) {
             # Calcula el porcentaje de avance para el degradé horizontal
             $ratio = $j / $maxLen
             $r = [Math]::Round($StartR + ($EndR - $StartR) * $ratio)
