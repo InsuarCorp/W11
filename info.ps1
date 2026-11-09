@@ -35,7 +35,7 @@ Write-Host "Procesos: $processCount | Subprocesos: $threadCount | Identificadore
 
                 
  Write-Host "========================================================================================" -ForegroundColor Yellow
- Write-Host "                                     Insuar Corp        V26.10                          " -ForegroundColor Yellow
+ Write-Host "                                Insuar Corp        V26.10                                " -ForegroundColor Yellow
  Write-Host "========================================================================================" -ForegroundColor Yellow
 
 Write-Host " " -ForegroundColor Cyan
