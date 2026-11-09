@@ -16,12 +16,15 @@ Write-Host "             REPARANDO Y REINICIANDO EL MOTOR DE WINDOWS UPDATE     
 Write-Host "================================================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# 2. Detener servicios críticos de actualización
-Write-Host "[1/5] Deteniendo servicios de Windows Update..." -ForegroundColor Yellow
+# 2. Detener servicios críticos de actualización y forzar cierre de procesos bloqueantes
+Write-Host "[1/5] Deteniendo servicios y liberando procesos de Windows Update..." -ForegroundColor Yellow
 Stop-Service -Name wuauserv -Force -ErrorAction SilentlyContinue
 Stop-Service -Name cryptSvc -Force -ErrorAction SilentlyContinue
 Stop-Service -Name bits -Force -ErrorAction SilentlyContinue
 Stop-Service -Name msiserver -Force -ErrorAction SilentlyContinue
+
+# Forzar cierre de procesos residuales que retienen la carpeta SoftwareDistribution
+Get-Process -Name "TiWorker", "TrustedInstaller", "MoInstaller" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
 
 # 3. Limpiar / Renombrar la carpeta SoftwareDistribution para borrar la caché atascada
@@ -33,7 +36,7 @@ if (Test-Path $swDistPath) {
         Rename-Item -Path $swDistPath -NewName $backupPath -ErrorAction Stop
         Write-Host "      -> Caché anterior respaldada exitosamente." -ForegroundColor Green
     } catch {
-        Write-Host "      -> No se pudo renombrar SoftwareDistribution (algun archivo esta en uso)." -ForegroundColor Red
+        Write-Host "      -> No se pudo renombrar SoftwareDistribution (algun archivo sigue en uso)." -ForegroundColor Red
     }
 }
 
