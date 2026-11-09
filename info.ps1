@@ -1,4 +1,34 @@
 clear
+function Write-GradientText {
+    param(
+        [string]$Text,
+        [int]$StartR = 100, [int]$StartG = 0, [int]$StartB = 255,   # Color inicial (ej: morado/azul)
+        [int]$EndR = 0,   [int]$EndG = 255, [int]$EndB = 100    # Color final (ej: verde brillante)
+    )
+
+    $lines = $Text -split "`r`n`"`r`"|`n"
+    $maxLen = 0
+    foreach ($line in $lines) { if ($line.Length -gt $maxLen) { $maxLen = $line.Length } }
+    if ($maxLen -eq 0) { $maxLen = 1 }
+
+    for ($i = 0; $i < $lines.Count; $i++) {
+        $line = $lines[$i]
+        for ($j = 0; $j < $line.Length; $j++) {
+            # Calcula el porcentaje de avance para el degradé horizontal
+            $ratio = $j / $maxLen
+            $r = [Math]::Round($StartR + ($EndR - $StartR) * $ratio)
+            $g = [Math]::Round($StartG + ($EndG - $StartG) * $ratio)
+            $b = [Math]::Round($StartB + ($EndB - $StartB) * $ratio)
+
+            # Usa secuencias de escape ANSI de PowerShell para color RGB personalizado
+            $esc = "$([char]033)[38;2;${r};${g};${b}m"
+            [Console]::Write("$esc$($line[$j])")
+        }
+        [Console]::WriteLine("$([char]033)[0m") # Resetea el color al terminar la línea
+    }
+}
+
+# Tu banner de InsuarCorp con la "I" corregida
 $banner = @"
 ██╗███╗   ██╗███████╗██╗   ██╗█████╗ ██████╗  ██████╗ ██████╗ ██████╗ ██████╗ 
 ██║████╗  ██║██╔════╝██║   ██║██╔══██╗██╔══██╗██╔════╝██╔═══██╗██╔══██╗██╔══██╗
@@ -7,6 +37,8 @@ $banner = @"
 ██║██║ ╚████║███████║╚██████╔╝██║  ██║██║  ██║╚██████╗╚██████╔╝██║  ██║██║     
 ╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     
 "@
+
+Write-GradientText -Text $banner
 
 
 
