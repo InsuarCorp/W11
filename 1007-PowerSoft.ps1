@@ -1,4 +1,6 @@
+# ==============================================================================
 # Configuracion del titulo de la ventana
+# ==============================================================================
 $host.UI.RawUI.WindowTitle = "InsuarCorp - Instalacion de Software para W11"
 
 # Carga ejecutable directo desde el repositorio
@@ -9,6 +11,9 @@ Write-Host "====================================================================
 Write-Host "                             [     Instalacion de SoftWare     ]                        " -ForegroundColor Magenta
 Write-Host "========================================================================================" -ForegroundColor Magenta
 Write-Host ""
+
+# Variable de control para acumular si se requerirá reiniciar al final
+$necesitaReinicio = $false
 
 Write-Host ""
 Write-Host "[+] Actualizando Aplicaciones..." -ForegroundColor Cyan
@@ -49,6 +54,9 @@ Get-WindowsUpdate -MicrosoftUpdate -Category "Drivers" -Install -AcceptAll
 Write-Host ""
 Write-Host "[OK] Finalizada la actualizacion de Drivers." -ForegroundColor Green
 Start-Sleep -Seconds 1
+
+# Activamos la marca de que hubo cambios en drivers y se necesitará reiniciar al final
+$necesitaReinicio = $true
 
 Write-Host ""
 Write-Host "[+] Instalando paquetes Microsoft Visual C++ Redistributables (x86 y x64)..." -ForegroundColor Cyan
@@ -121,4 +129,21 @@ Write-Host ""
 Write-Host "==========================================================" -ForegroundColor Yellow
 Write-Host "   Todas las tareas seleccionadas han finalizado.         " -ForegroundColor Green
 Write-Host "==========================================================" -ForegroundColor Yellow
-Read-Host "Presione Enter para volver al menu..."
+Write-Host ""
+
+# Control final de reinicio acumulado
+if ($necesitaReinicio) {
+    Write-Host "[!] Se han instalado controladores que requieren un reinicio para funcionar correctamente." -ForegroundColor Yellow
+    $confirmarReinicio = Read-Host "[?] ¿Deseas reiniciar la computadora ahora? (S/N)"
+    
+    if ($confirmarReinicio -eq "S" -or $confirmarReinicio -eq "s") {
+        Write-Host "[!] Reiniciando el sistema en 5 segundos..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 5
+        Restart-Computer -Force
+    } else {
+        Write-Host "[*] Reinicio aplazado. Recuerda reiniciar la PC manualmente más tarde." -ForegroundColor Cyan
+        Read-Host "Presione Enter para salir..."
+    }
+} else {
+    Read-Host "Presione Enter para volver al menu..."
+}
