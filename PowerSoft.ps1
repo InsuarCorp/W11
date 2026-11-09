@@ -10,7 +10,6 @@ Write-Host "                             [     Instalacion de SoftWare     ]    
 Write-Host "========================================================================================" -ForegroundColor Magenta
 Write-Host ""
 
-
 Write-Host ""
 Write-Host "[+] Actualizando Aplicaciones..." -ForegroundColor Cyan
 winget upgrade --all --include-unknown --accept-package-agreements --accept-source-agreements
@@ -72,15 +71,12 @@ Write-Host ""
 Write-Host "[OK] Instalacion de paquetes VCRedist completada." -ForegroundColor Green
 Start-Sleep -Seconds 1
 
-
-
 Write-Host ""
 Write-Host "[+] Instalando DirectX End-User Runtimes (June 2010)..." -ForegroundColor Cyan
 winget install --id Microsoft.DirectX --silent --accept-package-agreements --accept-source-agreements
 Write-Host ""
 Write-Host "[OK] Instalacion de DirectX completada." -ForegroundColor Green
 Start-Sleep -Seconds 1
-
 
 Write-Host ""
 Write-Host "[+] Asegurando servicio de Windows Update..." -ForegroundColor Cyan
@@ -101,15 +97,12 @@ Write-Host ""
 Write-Host "[OK] Configuracion de entornos .NET y DirectPlay completada." -ForegroundColor Green
 Start-Sleep -Seconds 1
 
-
-
 Write-Host ""
 Write-Host "[+] Instalando Java Runtime Environment (Oracle JRE)..." -ForegroundColor Cyan
 winget install --id Oracle.JavaRuntimeEnvironment --silent --accept-package-agreements --accept-source-agreements
 Write-Host ""
 Write-Host "[OK] Instalacion de Java completada." -ForegroundColor Green
 Start-Sleep -Seconds 1
-
 
 Write-Host ""
 Write-Host "[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
@@ -119,14 +112,10 @@ Write-Host "El sistema inicio el: $bootTime" -ForegroundColor Yellow
 Write-Host "Tiempo encendido: $($uptime.Days) dias, $($uptime.Hours) horas, $($uptime.Minutes) minutos" -ForegroundColor Green
 Start-Sleep -Seconds 1
 
-
-
 Write-Host ""
 Write-Host "[+] Generando Resumen General del Sistema..." -ForegroundColor Cyan
 Get-ComputerInfo | Select-Object CsName, OsName, OsVersion, CsModel, CsProcessors | Format-List
 Start-Sleep -Seconds 1
-
-
 
 Write-Host ""
 Write-Host "==========================================================" -ForegroundColor Yellow
