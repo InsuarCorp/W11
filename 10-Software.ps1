@@ -20,7 +20,7 @@ do {
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar DirectX Runtime"
     Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar .NET 3.5, DirectPlay e instalar .NET 8 Desktop"
     Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar Java Runtime Environment (JRE)"
-    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar 1 al 6 consecutivo (Propio)"
+    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Instalar 1 al 6 consecutivo (No Consulta)"
     Write-Host ""
 
     Write-Host "========================================================================================" -ForegroundColor Green
