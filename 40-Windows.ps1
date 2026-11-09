@@ -17,7 +17,7 @@ do {
     Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "S   " 
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "H   " 
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetria   " 
-    Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "W   "  
+    Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Update  "  
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "T"
         Write-Host ""
         Write-Host ""
