@@ -14,7 +14,7 @@
 [04] Instalar DirectX Runtime
 [05] Activar .NET 3.5, DirectPlay e instalar .NET 8 Desktop
 [06] Instalar Java Runtime Environment (JRE)
-
+[07] Instalar 1 al 6 consecutivo (Propio)
 
 
 ========================================================================================
