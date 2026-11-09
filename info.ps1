@@ -42,4 +42,5 @@ Write-Host " " -ForegroundColor Cyan
 Write-Host " " -ForegroundColor Cyan
 
 Write-Host "Link   irm https://raw.githubusercontent.com/InsuarCorp/W11/main/00-Menu.ps1 | iex" -ForegroundColor Yellow
-
+Write-Host "Activar Permisos de ejecucion   " -ForegroundColor Yellow
+Write-Host "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser   " -ForegroundColor Yellow
