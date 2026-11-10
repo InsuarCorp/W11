@@ -1,29 +1,32 @@
+<#
+.SYNOPSIS
+    Script integral de gestión, backup, diagnóstico y administración de controladores para Windows 11.
+.DESCRIPTION
+    Permite actualizar drivers mediante PSWindowsUpdate, realizar backups locales, escanear errores de hardware, abrir el Administrador de dispositivos y gestionar Driver Verifier.
+#>
+
 function Mostrar-Menu {
     Clear-Host
     Write-Host "==================================================" -ForegroundColor Cyan
-    Write-Host "      MENU DE GESTION Y DIAGNOSTICO DE DRIVERS     " -ForegroundColor Cyan
+    Write-Host "      MENU INTEGRAL DE GESTION DE DRIVERS         " -ForegroundColor Cyan
     Write-Host "==================================================" -ForegroundColor Cyan
     
-    Write-Host "=========================================================" -ForegroundColor white
-    Write-Host "      Si Windows bloquea la ejecucion del script por     " -ForegroundColor white
-    Write-Host "       politicas de seguridad, abre PowerShell como      " -ForegroundColor white
-    Write-Host "             Administrador y ejecuta primero             " -ForegroundColor white
-    Write-Host "           Set-ExecutionPolicy Unrestricted -Scope       " -ForegroundColor green
-    Write-Host "=========================================================" -ForegroundColor white   
 
     Write-Host "[01]. Instalar drivers (via Windows Update)" -ForegroundColor White
     Write-Host "[02]. Realizar Backup de drivers (en C:\DriverBackup)" -ForegroundColor White
-    Write-Host "[03]. Mostrar estado actual en tiempo real (verifier /volatile /query)" -ForegroundColor White
-    Write-Host "[05]. Mostrar configuracion guardada (verifier /querysetting)" -ForegroundColor White
-    Write-Host "[06]. Mostrar informacion general del estado (verifier /query)" -ForegroundColor White
-    Write-Host "[07]. Restablecer / Desactivar Driver Verifier (verifier /reset)" -ForegroundColor White
+    Write-Host "[03]. Buscar dispositivos con problemas de hardware" -ForegroundColor White
+    Write-Host "[04]. Abrir Administrador de Dispositivos (Device Manager)" -ForegroundColor White
+    Write-Host "[05]. Mostrar estado actual de Driver Verifier (en tiempo real)" -ForegroundColor White
+    Write-Host "[06]. Mostrar configuracion guardada de Driver Verifier" -ForegroundColor White
+    Write-Host "[07]. Mostrar informacion general de Driver Verifier" -ForegroundColor White
+    Write-Host "[08]. Restablecer / Desactivar Driver Verifier (verifier /reset)" -ForegroundColor White
     Write-Host "[00]. Salir" -ForegroundColor Yellow
     Write-Host "==================================================" -ForegroundColor Cyan
 }
 
 do {
     Mostrar-Menu
-    $opcion = Read-Host "Selecciona una opcion [0-7]"
+    $opcion = Read-Host "Selecciona una opcion [0-8]"
 
     switch ($opcion) {
         "1" {
@@ -75,26 +78,48 @@ do {
 
         "3" {
             Write-Host ""
+            Write-Host "[+] Escaneando dispositivos en busca de conflictos o errores..." -ForegroundColor Cyan
+            $dispositivosConError = Get-CimInstance Win32_PnPEntity | Where-Object { $_.ConfigManagerErrorCode -ne 0 -and $_.ConfigManagerErrorCode -ne $null }
+            
+            if ($dispositivosConError) {
+                Write-Host "[!] Se encontraron los siguientes dispositivos con problemas:" -ForegroundColor Yellow
+                $dispositivosConError | Select-Object Name, DeviceID, ConfigManagerErrorCode | Format-Table -AutoSize
+            } else {
+                Write-Host "[OK] ¡Excelente! No se encontraron dispositivos con errores activos en el sistema." -ForegroundColor Green
+            }
+            Write-Host ""
+            Pause
+        }
+
+        "4" {
+            Write-Host ""
+            Write-Host "[+] Abriendo el Administrador de Dispositivos..." -ForegroundColor Cyan
+            Start-Process "devmgmt.msc"
+            Start-Sleep -Seconds 1
+        }
+
+        "5" {
+            Write-Host ""
             Write-Host "[+] Ejecutando: verifier /volatile /query" -ForegroundColor Cyan
             verifier /volatile /query
             Pause
         }
 
-        "5" {
+        "6" {
             Write-Host ""
             Write-Host "[+] Ejecutando: verifier /querysetting" -ForegroundColor Cyan
             verifier /querysetting
             Pause
         }
 
-        "6" {
+        "7" {
             Write-Host ""
             Write-Host "[+] Ejecutando: verifier /query" -ForegroundColor Cyan
             verifier /query
             Pause
         }
 
-        "7" {
+        "8" {
             Write-Host ""
             Write-Host "[+] Restableciendo Driver Verifier (verifier /reset)..." -ForegroundColor Yellow
             verifier /reset
