@@ -14,8 +14,8 @@ do {
     Write-Host ""
     
      # Opciones alineadas
-    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Firewall   " 
-    Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "H   " 
+    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "H   " 
+    Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "Firewall  " 
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetria   " 
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Update  "  
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "T"
@@ -33,12 +33,12 @@ do {
     switch ($choice) {
         { $_ -in '1' } {
             Write-Host "`n[+] Cargando modulo 01 (Software)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4002-Firewall.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4001-.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '2' } {
             Write-Host "`n[+] Cargando modulo 02 (Hardware)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/2-Hardware.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4002-Firewall.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '3' } {
@@ -48,7 +48,7 @@ do {
         }
         { $_ -in '4' } {
             Write-Host "`n[+] Cargando modulo 04 (Windows)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4004-Telemetria.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4004-Update.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '5' } {
