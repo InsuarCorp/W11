@@ -14,7 +14,7 @@ do {
     Write-Host ""
     
      # Opciones alineadas
-    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "S   " 
+    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Firewall   " 
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "H   " 
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetria   " 
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Update  "  
@@ -33,7 +33,7 @@ do {
     switch ($choice) {
         { $_ -in '1' } {
             Write-Host "`n[+] Cargando modulo 01 (Software)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/1-Software.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4002-Firewall.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '2' } {
