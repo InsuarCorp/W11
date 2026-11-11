@@ -12,14 +12,14 @@ function Mostrar-Menu {
     Write-Host "==================================================" -ForegroundColor Cyan
     
 
-    Write-Host "[01]. Instalar drivers (via Windows Update)" -ForegroundColor White
-    Write-Host "[02]. Realizar Backup de drivers (en C:\DriverBackup)" -ForegroundColor White
-    Write-Host "[03]. Buscar dispositivos con problemas de hardware" -ForegroundColor White
-    Write-Host "[04]. Abrir Administrador de Dispositivos (Device Manager)" -ForegroundColor White
-    Write-Host "[05]. Mostrar estado actual de Driver Verifier (en tiempo real)" -ForegroundColor White
-    Write-Host "[06]. Mostrar configuracion guardada de Driver Verifier" -ForegroundColor White
-    Write-Host "[07]. Mostrar informacion general de Driver Verifier" -ForegroundColor White
-    Write-Host "[08]. Restablecer / Desactivar Driver Verifier (verifier /reset)" -ForegroundColor White
+    Write-Host "[1]. Instalar drivers (via Windows Update)" -ForegroundColor White
+    Write-Host "[2]. Realizar Backup de drivers (en C:\DriverBackup)" -ForegroundColor White
+    Write-Host "[3]. Buscar dispositivos con problemas de hardware" -ForegroundColor White
+    Write-Host "[4]. Abrir Administrador de Dispositivos (Device Manager)" -ForegroundColor White
+    Write-Host "[5]. Mostrar estado actual de Driver Verifier (en tiempo real)" -ForegroundColor White
+    Write-Host "[6]. Mostrar configuracion guardada de Driver Verifier" -ForegroundColor White
+    Write-Host "[7]. Mostrar informacion general de Driver Verifier" -ForegroundColor White
+    Write-Host "[8]. Restablecer / Desactivar Driver Verifier (verifier /reset)" -ForegroundColor White
     Write-Host "[00]. Salir" -ForegroundColor Yellow
     Write-Host "==================================================" -ForegroundColor Cyan
 }
