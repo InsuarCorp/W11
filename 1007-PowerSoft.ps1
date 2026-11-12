@@ -23,42 +23,6 @@ Write-Host "[OK] Finalizada la actualizacion de Aplicaciones." -ForegroundColor 
 Start-Sleep -Seconds 1
 
 Write-Host ""
-Write-Host "[+] Verificando requisitos del sistema para drivers..." -ForegroundColor Cyan
-
-# Habilitar TLS 1.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-# Verifica e instala NuGet silenciosamente sin pedir confirmacion
-if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
-    Write-Host "[+] Instalando proveedor NuGet de forma automatica..." -ForegroundColor Yellow
-    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ForceBootstrap -Scope CurrentUser -ErrorAction SilentlyContinue
-}
-
-# Configura repositorio PSGallery como confiable
-Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted -ErrorAction SilentlyContinue
-
-# Instala o importa PSWindowsUpdate
-if (-not (Get-Module -Name PSWindowsUpdate)) {
-    if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
-        Write-Host "[+] Instalando modulo PSWindowsUpdate..." -ForegroundColor Yellow
-        Install-Module PSWindowsUpdate -Force -Scope CurrentUser -SkipPublisherCheck -Confirm:$false
-    }
-    Import-Module PSWindowsUpdate
-}
-
-Write-Host "[+] Habilitando servicio de Microsoft Update para Drivers..." -ForegroundColor Cyan
-Add-WUServiceManager -ServiceID "7971f918-a847-4430-9279-4a52d1efe18d" -Confirm:$false -ErrorAction SilentlyContinue
-
-Write-Host "[+] Buscando e instalando Drivers..." -ForegroundColor Cyan
-Get-WindowsUpdate -MicrosoftUpdate -Category "Drivers" -Install -AcceptAll
-Write-Host ""
-Write-Host "[OK] Finalizada la actualizacion de Drivers." -ForegroundColor Green
-Start-Sleep -Seconds 1
-
-# Activamos la marca de que hubo cambios en drivers y se necesitará reiniciar al final
-$necesitaReinicio = $true
-
-Write-Host ""
 Write-Host "[+] Instalando paquetes Microsoft Visual C++ Redistributables (x86 y x64)..." -ForegroundColor Cyan
 
 $vcPackages = @(
@@ -112,6 +76,45 @@ Write-Host ""
 Write-Host "[OK] Instalacion de Java completada." -ForegroundColor Green
 Start-Sleep -Seconds 1
 
+# ==============================================================================
+# Instalación de Drivers (Movido al final para evitar reinicios anticipados)
+# ==============================================================================
+Write-Host ""
+Write-Host "[+] Verificando requisitos del sistema para drivers..." -ForegroundColor Cyan
+
+# Habilitar TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Verifica e instala NuGet silenciosamente sin pedir confirmacion
+if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
+    Write-Host "[+] Instalando proveedor NuGet de forma automatica..." -ForegroundColor Yellow
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ForceBootstrap -Scope CurrentUser -ErrorAction SilentlyContinue
+}
+
+# Configura repositorio PSGallery como confiable
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted -ErrorAction SilentlyContinue
+
+# Instala o importa PSWindowsUpdate
+if (-not (Get-Module -Name PSWindowsUpdate)) {
+    if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
+        Write-Host "[+] Instalando modulo PSWindowsUpdate..." -ForegroundColor Yellow
+        Install-Module PSWindowsUpdate -Force -Scope CurrentUser -SkipPublisherCheck -Confirm:$false
+    }
+    Import-Module PSWindowsUpdate
+}
+
+Write-Host "[+] Habilitando servicio de Microsoft Update para Drivers..." -ForegroundColor Cyan
+Add-WUServiceManager -ServiceID "7971f918-a847-4430-9279-4a52d1efe18d" -Confirm:$false -ErrorAction SilentlyContinue
+
+Write-Host "[+] Buscando e instalando Drivers..." -ForegroundColor Cyan
+Get-WindowsUpdate -MicrosoftUpdate -Category "Drivers" -Install -AcceptAll
+Write-Host ""
+Write-Host "[OK] Finalizada la actualizacion de Drivers." -ForegroundColor Green
+Start-Sleep -Seconds 1
+
+# Activamos la marca de que hubo cambios en drivers
+$necesitaReinicio = $true
+
 Write-Host ""
 Write-Host "[+] Calculando tiempo de actividad de Windows (Uptime)..." -ForegroundColor Cyan
 $bootTime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
@@ -131,7 +134,7 @@ Write-Host "   Todas las tareas seleccionadas han finalizado.         " -Foregro
 Write-Host "==========================================================" -ForegroundColor Yellow
 Write-Host ""
 
-# Control final de reinicio acumulado
+# Control final de reinicio acumulado (ahora sí, al puro final de todo)
 if ($necesitaReinicio) {
     Write-Host "[!] Se han instalado controladores que requieren un reinicio para funcionar correctamente." -ForegroundColor Yellow
     $confirmarReinicio = Read-Host "[?] ¿Deseas reiniciar la computadora ahora? (S/N)"
