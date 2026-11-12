@@ -18,7 +18,7 @@ do {
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "Firewall  " 
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetria   " 
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Reiniciar Update  "  
-    Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "T"
+    Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Reiniciar Impresora"
         Write-Host ""
         Write-Host ""
         Write-Host ""
@@ -53,7 +53,7 @@ do {
         }
         { $_ -in '5' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/50-Tweak.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4005-Impresora.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '100' } {
