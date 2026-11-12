@@ -1,8 +1,16 @@
+# ==============================================================================
+# Actualización de PowerShell a la versión moderna y pausa controlada
+# ==============================================================================
+
 $psversiontable
-winget install --id Microsoft.powershell
-pwsh
+winget install --id Microsoft.powershell --silent --accept-package-agreements --accept-source-agreements
+
+Write-Host ""
+Write-Host "[OK] Instalación / Actualización de PowerShell completada." -ForegroundColor Green
+Write-Host ""
+
 $psversiontable
 
-# Pausa al final
+# Pausa al final orientada a regresar al menú principal
 Write-Host ""
-Read-Host "Presione Enter para salir..."
+Read-Host "Presione Enter para volver al menú..."
