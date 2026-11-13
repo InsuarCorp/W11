@@ -19,7 +19,7 @@ do {
     Write-Host "[20] " -NoNewline -ForegroundColor Cyan; Write-Host "Hardware   " 
     Write-Host "[30] " -NoNewline -ForegroundColor Cyan; Write-Host "Driver   "  
     Write-Host "[40] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows   "  
-    Write-Host "[50] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweak"
+    Write-Host "[50] " -NoNewline -ForegroundColor Cyan; Write-Host "Tweaks"
     Write-Host ""
     Write-Host ""
     Write-Host ""
@@ -55,7 +55,7 @@ do {
         }
         { $_ -in '50' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/50-Tweak.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/50-Tweaks.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '100' } {
