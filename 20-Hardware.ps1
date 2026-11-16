@@ -28,7 +28,7 @@ do {
     
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
     Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Trim SSD/M2       " -NoNewline
-    Write-Host "[12] " -NoNewline -ForegroundColor Cyan; Write-Host "REsumen del sistema       "
+    Write-Host "[12] " -NoNewline -ForegroundColor Cyan; Write-Host "Resumen del sistema       "
     Write-Host ""
     
     Write-Host "[0]  VOLVER AL MENU PRINCIPAL" -ForegroundColor Yellow
@@ -106,6 +106,7 @@ do {
           '12' {
             Write-Host "`n[+] REsumen del sistema, analizando..." -ForegroundColor Cyan
             systeminfo
+             Read-Host "Presione Enter para continuar..."
         }
         '0' {
             Write-Host "`n[+] Regresando al menu principal..." -ForegroundColor Yellow
