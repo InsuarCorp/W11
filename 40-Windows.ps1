@@ -19,6 +19,7 @@ do {
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetria   " 
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Reiniciar Update  "  
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Reiniciar Impresora"
+    Write-Host "[6] " -NoNewline -ForegroundColor Cyan; Write-Host "Gestion de Wi-Fi"
         Write-Host ""
         Write-Host ""
         Write-Host ""
@@ -56,18 +57,19 @@ do {
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4005-Impresora.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
+        { $_ -in '6' } {
+            Write-Host "`n[+] Cargando modulo 06 (WiFi)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4006-Wifi.ps1 | iex
+            Read-Host "Presione Enter para continuar..."
+        }
         { $_ -in '100' } {
             Write-Host "`n[+] Analizando Repositorio..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/Analisis.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
-
-{ $_ -in 'a', 'A' } {
-          Get-Content  https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt | Out-GridView
+        { $_ -in 'a', 'A' } {
+            Get-Content https://raw.githubusercontent.com/InsuarCorp/W11/main/Ayuda.txt | Out-GridView
         }
-
-
-     
         { $_ -in '0', '00' } {
             return
         }
