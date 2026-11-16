@@ -27,7 +27,8 @@ do {
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir Carpeta de Reportes"
     
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
-    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Trim SSD/M2       "
+    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Trim SSD/M2       " -NoNewline
+    Write-Host "[12] " -NoNewline -ForegroundColor Cyan; Write-Host "REsumen del sistema       "
     Write-Host ""
     
     Write-Host "[0]  VOLVER AL MENU PRINCIPAL" -ForegroundColor Yellow
@@ -100,6 +101,11 @@ do {
             # Abre la ruta real del Escritorio
             $desktopFolder = [Environment]::GetFolderPath("Desktop")
             Start-Process explorer.exe $desktopFolder
+        }
+
+          '12' {
+            Write-Host "`n[+] REsumen del sistema, analizando..." -ForegroundColor Cyan
+            systeminfo
         }
         '0' {
             Write-Host "`n[+] Regresando al menu principal..." -ForegroundColor Yellow
