@@ -11,7 +11,7 @@ Write-Host ""
 #  Comprobar si se está ejecutando como Administrador
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "[!] Este script debe ejecutarse como ADMINISTRADOR." -ForegroundColor Red
-    Write-Host "[*] Haz clic derecho sobre el archivo .ps1 y selecciona 'Ejecutar con PowerShell como administrador'." -ForegroundColor Yellow
+    Write-Host "[*] Ejecutar con PowerShell como administrador." -ForegroundColor Yellow
     Pause
     Exit
 }
