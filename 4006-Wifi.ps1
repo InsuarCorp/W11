@@ -13,13 +13,14 @@ do {
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Ver redes Wi-Fi guardadas (Perfiles)" 
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Mostrar Wi-Fi y sus contraseñas en texto plano" 
     Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Buscar redes Wi-Fi cercanas (Cercanias)"
+    Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Eliminar un perfil de red Wi-Fi guardado"
     Write-Host ""
 
     Write-Host "[00] SALIR / VOLVER" -ForegroundColor Yellow
     Write-Host ""
 
     # Lectura de opciones multiples o individuales
-    $inputRaw = Read-Host "INGRESE COMANDO (ej: 1, 2 o 3)"
+    $inputRaw = Read-Host "INGRESE COMANDO (ej: 1, 2, 3 o 4)"
 
     # Limpia ceros a la izquierda y espacios para normalizar la entrada
     $choices = $inputRaw -split '[\s,]+' | Where-Object { $_ -ne "" } | ForEach-Object { $_.TrimStart('0').Trim() }
@@ -62,6 +63,26 @@ do {
                 netsh wlan show networks mode=bssid
                 Write-Host ""
                 Write-Host "[OK] Escaneo de cercanias finalizado." -ForegroundColor Green
+                Start-Sleep -Seconds 1
+            }
+
+            "4" {
+                Write-Host ""
+                Write-Host "[+] Perfiles de red guardados actualmente:" -ForegroundColor Cyan
+                netsh wlan show profiles
+                Write-Host ""
+                
+                $targetRed = Read-Host "Ingrese el EXACTO nombre (SSID) de la red que desea eliminar"
+                
+                if (-not [string]::IsNullOrWhiteSpace($targetRed)) {
+                    Write-Host "[+] Eliminando perfil '$targetRed'..." -ForegroundColor Yellow
+                    netsh wlan delete profile name="$targetRed"
+                    Write-Host ""
+                    Write-Host "[OK] Operacion de borrado finalizada." -ForegroundColor Green
+                } else {
+                    Write-Host "[X] No se ingreso ningun nombre valido." -ForegroundColor Red
+                }
+                
                 Start-Sleep -Seconds 1
             }
 
