@@ -8,6 +8,8 @@ Write-Host "██║██║ ╚████║███████║╚█�
 Write-Host "╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝        " -ForegroundColor Cyan
 
 Write-Host ""
+Write-Host "Los registros se guardan en c:\InsuarCorp"
+Write-Host ""
 #  Comprobar si se está ejecutando como Administrador
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "[!] Este script debe ejecutarse como ADMINISTRADOR." -ForegroundColor Red
