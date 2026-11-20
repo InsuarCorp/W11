@@ -18,7 +18,7 @@ do {
     # Opciones alineadas y limpias
     Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Ollama y Open WebUI" 
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "Serial" 
-    Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Telemetría y Privacidad" 
+    Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Cache" 
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Windows Update"  
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Herramienta de Impresora"
     Write-Host "[6] " -NoNewline -ForegroundColor Cyan; Write-Host "Modo Dios"
@@ -45,7 +45,7 @@ do {
         }
         { $_ -in '3' } {
             Write-Host "`n[+] Cargando modulo 03 (Drivers)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/5003-Telemetria.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/5003-Cache.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '4' } {
