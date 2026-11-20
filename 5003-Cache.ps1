@@ -1,133 +1,3 @@
-# ==============================================================================
-# Configuracion del titulo de la ventana
-# ==============================================================================
-$host.UI.RawUI.WindowTitle = "InsuarCorp - Limpieza de Cache y Temporales W11"
-
-# Definir ruta del log (usa el directorio actual o $PSScriptRoot si se ejecuta local)
-$BaseDir = if (-not [string]::IsNullOrWhiteSpace($PSScriptRoot)) { $PSScriptRoot } else { (Get-Location).Path }
-$LogFile = Join-Path -Path $BaseDir -ChildPath "limpieza_temp.log"
-
-# Rutas de temporales
-$WinTemp  = "C:\Windows\Temp"
-$UserTemp = $env:TEMP
-
-# Funcion auxiliar para limpiar carpetas y registrar en log
-function Clear-TempFolder {
-    param (
-        [string]$TargetPath,
-        [string]$LogPath
-    )
-
-    if (-not (Test-Path -Path $TargetPath)) {
-        Add-Content -Path $LogPath -Value "Ruta no encontrada: $TargetPath"
-        return 0
-    }
-
-    $DeletedCount = 0
-
-    # Eliminar archivos recursivamente
-    $Files = Get-ChildItem -Path $TargetPath -File -Recurse -Force -ErrorAction SilentlyContinue
-    foreach ($File in $Files) {
-        try {
-            Remove-Item -Path $File.FullName -Force -ErrorAction Stop
-            Add-Content -Path $LogPath -Value "Eliminado: $($File.FullName)"
-            $DeletedCount++
-        } catch {
-            Add-Content -Path $LogPath -Value "En uso / Omitido: $($File.FullName)"
-        }
-    }
-
-    # Eliminar subcarpetas vacias o residuales
-    $Folders = Get-ChildItem -Path $TargetPath -Directory -Force -ErrorAction SilentlyContinue
-    foreach ($Folder in $Folders) {
-        try {
-            Remove-Item -Path $Folder.FullName -Recurse -Force -ErrorAction Stop
-            Add-Content -Path $LogPath -Value "Eliminando carpeta: $($Folder.FullName)"
-            $DeletedCount++
-        } catch {
-            Add-Content -Path $LogPath -Value "Carpeta en uso / Omitida: $($Folder.FullName)"
-        }
-    }
-
-    return $DeletedCount
-}
-
-# Funcion para vaciar la Papelera de reciclaje
-function Clear-RecycleBinSafe {
-    param (
-        [string]$LogPath
-    )
-
-    try {
-        Clear-RecycleBin -Force -ErrorAction Stop
-        Add-Content -Path $LogPath -Value "Papelera de reciclaje vaciada correctamente."
-        return $true
-    } catch {
-        Add-Content -Path $LogPath -Value "Papelera vacia o con elementos omitidos: $($_.Exception.Message)"
-        return $false
-    }
-}
-
-# Funcion para limpiar accesos directos de Recientes del Explorador de archivos
-function Clear-RecentItems {
-    param (
-        [string]$LogPath
-    )
-
-    $RecentDirs = @(
-        "$env:APPDATA\Microsoft\Windows\Recent",
-        "$env:APPDATA\Microsoft\Windows\Recent\AutomaticDestinations",
-        "$env:APPDATA\Microsoft\Windows\Recent\CustomDestinations"
-    )
-
-    $DeletedCount = 0
-
-    foreach ($Dir in $RecentDirs) {
-        if (-not (Test-Path -Path $Dir)) {
-            Add-Content -Path $LogPath -Value "Ruta de recientes no encontrada: $Dir"
-            continue
-        }
-
-        $Items = Get-ChildItem -Path $Dir -Force -File -ErrorAction SilentlyContinue
-        foreach ($Item in $Items) {
-            try {
-                Remove-Item -Path $Item.FullName -Force -ErrorAction Stop
-                Add-Content -Path $LogPath -Value "Reciente eliminado: $($Item.FullName)"
-                $DeletedCount++
-            } catch {
-                Add-Content -Path $LogPath -Value "Reciente en uso / Omitido: $($Item.FullName)"
-            }
-        }
-    }
-
-    return $DeletedCount
-}
-
-# Funcion para reiniciar el Explorador de archivos (explorer.exe)
-function Restart-ExplorerSafe {
-    param (
-        [string]$LogPath
-    )
-
-    try {
-        Write-Host " -> Reiniciando Explorador de archivos (explorer.exe)..." -ForegroundColor Yellow
-        Add-Content -Path $LogPath -Value "Reiniciando explorer.exe..."
-
-        Get-Process -Name "explorer" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction Stop
-        Start-Sleep -Seconds 1
-
-        if (-not (Get-Process -Name "explorer" -ErrorAction SilentlyContinue)) {
-            Start-Process -FilePath "$env:WINDIR\explorer.exe"
-        }
-
-        Add-Content -Path $LogPath -Value "Explorador de archivos reiniciado correctamente."
-        Write-Host " -> Explorador reiniciado." -ForegroundColor Green
-    } catch {
-        Add-Content -Path $LogPath -Value "Error al reiniciar explorer.exe: $($_.Exception.Message)"
-        Write-Host " -> Advertencia al reiniciar explorer.exe: $($_.Exception.Message)" -ForegroundColor Red
-    }
-}
-
 do {
     Clear-Host
 
@@ -142,15 +12,15 @@ do {
 
     Write-Host "Rutas objetivo:" -ForegroundColor DarkGray
     Write-Host " - $WinTemp" -ForegroundColor DarkGray
-    Write-Host " - $UserTemp" -ForegroundColor DarkGray
-    Write-Host " - Papelera de reciclaje + Recientes del Explorador" -ForegroundColor DarkGray
+    Write-Host " - $UserTemp (todos los perfiles locales)" -ForegroundColor DarkGray
+    Write-Host " - Papelera de reciclaje + Recientes del Explorador (todos los perfiles)" -ForegroundColor DarkGray
     Write-Host "Log: $LogFile" -ForegroundColor DarkGray
     Write-Host ""
 
     # Opciones alineadas y limpias
-    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpieza COMPLETA (Temp + Papelera + Recientes) y reiniciar Explorador"
+    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpieza COMPLETA (Temp todos + Papelera + Recientes) y reiniciar Explorador"
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpiar solo C:\Windows\Temp"
-    Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpiar solo AppData\Local\Temp del usuario"
+    Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpiar AppData\Local\Temp de todos los usuarios"
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Vaciar Papelera de reciclaje y limpiar Recientes (+ reiniciar Explorador)"
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Ver archivo de log (limpieza_temp.log)"
 
@@ -176,9 +46,9 @@ do {
             Add-Content -Path $LogFile -Value "Borrando archivos de $WinTemp"
             $CountWin = Clear-TempFolder -TargetPath $WinTemp -LogPath $LogFile
 
-            Write-Host " -> Borrando archivos de $UserTemp..." -ForegroundColor Yellow
-            Add-Content -Path $LogFile -Value "Borrando archivos de $UserTemp"
-            $CountUser = Clear-TempFolder -TargetPath $UserTemp -LogPath $LogFile
+            Write-Host " -> Borrando archivos Temp de todos los usuarios..." -ForegroundColor Yellow
+            Add-Content -Path $LogFile -Value "Borrando archivos Temp de todos los perfiles locales"
+            $CountUser = Clear-AllUsersTemp -LogPath $LogFile
 
             Write-Host " -> Vaciando Papelera de reciclaje..." -ForegroundColor Yellow
             $null = Clear-RecycleBinSafe -LogPath $LogFile
@@ -214,13 +84,13 @@ do {
             Read-Host "`nPresione Enter para continuar..."
         }
         { $_ -in '3' } {
-            Write-Host "`n[+] Limpiando $UserTemp..." -ForegroundColor Cyan
+            Write-Host "`n[+] Limpiando AppData\Local\Temp de todos los usuarios..." -ForegroundColor Cyan
             $FechaInicio = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
             Add-Content -Path $LogFile -Value "==============================================="
-            Add-Content -Path $LogFile -Value "Inicio de limpieza ($UserTemp): $FechaInicio"
+            Add-Content -Path $LogFile -Value "Inicio de limpieza (Temp todos los usuarios): $FechaInicio"
             Add-Content -Path $LogFile -Value "==============================================="
 
-            $CountUser = Clear-TempFolder -TargetPath $UserTemp -LogPath $LogFile
+            $CountUser = Clear-AllUsersTemp -LogPath $LogFile
 
             $FechaFin = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
             Add-Content -Path $LogFile -Value "Fin de limpieza: $FechaFin"
