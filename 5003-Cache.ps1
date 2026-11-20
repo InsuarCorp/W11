@@ -3,61 +3,78 @@
 # ==============================================================================
 $host.UI.RawUI.WindowTitle = "InsuarCorp - Limpieza de Cache y Temporales W11"
 
-# Definir ruta del log (usa $PSScriptRoot si existe, o el directorio actual)
-$BaseDir = if (-not [string]::IsNullOrWhiteSpace($PSScriptRoot)) {
-    $PSScriptRoot
-} elseif (-not [string]::IsNullOrWhiteSpace($PWD.Path)) {
-    $PWD.Path
+# Definir ruta del log de forma segura (nunca nula)
+$BaseDir = $null
+if (-not [string]::IsNullOrWhiteSpace($PSScriptRoot)) {
+    $BaseDir = $PSScriptRoot
+} elseif ($PWD -and -not [string]::IsNullOrWhiteSpace($PWD.Path)) {
+    $BaseDir = $PWD.Path
 } else {
-    (Get-Location).Path
+    $BaseDir = (Get-Location).Path
 }
 
 if ([string]::IsNullOrWhiteSpace($BaseDir)) {
     $BaseDir = $env:TEMP
 }
+if ([string]::IsNullOrWhiteSpace($BaseDir)) {
+    $BaseDir = "C:\Windows\Temp"
+}
 
 $LogFile = Join-Path -Path $BaseDir -ChildPath "limpieza_temp.log"
 
-# Rutas de temporales
-$WinTemp  = "C:\Windows\Temp"
-$UserTemp = if (-not [string]::IsNullOrWhiteSpace($env:TEMP)) { $env:TEMP } else { "C:\Windows\Temp" }
+# Rutas base
+$WinTemp = "C:\Windows\Temp"
 
-# Funcion auxiliar segura para escribir en el log sin fallar si $LogPath es nulo
 function Write-CacheLog {
     param (
         [string]$LogPath,
         [string]$Message
     )
 
-    if (-not [string]::IsNullOrWhiteSpace($LogPath)) {
-        try {
-            $ParentDir = Split-Path -Path $LogPath -Parent
-            if (-not [string]::IsNullOrWhiteSpace($ParentDir) -and -not (Test-Path -Path $ParentDir)) {
-                New-Item -Path $ParentDir -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
-            }
-            Add-Content -Path $LogPath -Value $Message -ErrorAction SilentlyContinue
-        } catch {
-            # Evita romper el flujo principal si el log esta bloqueado
+    if ([string]::IsNullOrWhiteSpace($LogPath)) { return }
+
+    try {
+        $ParentDir = Split-Path -Path $LogPath -Parent
+        if (-not [string]::IsNullOrWhiteSpace($ParentDir) -and -not (Test-Path -Path $ParentDir)) {
+            New-Item -Path $ParentDir -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
         }
-    }
+        Add-Content -Path $LogPath -Value $Message -ErrorAction SilentlyContinue
+    } catch {}
 }
 
-# Obtener perfiles de usuario locales reales (admin y no admin)
-function Get-LocalUserProfiles {
-    $ExcludedNames = @("Public", "Default", "Default User", "All Users", "WDAGUtilityAccount")
-    $Profiles = @()
+function Get-ActiveInteractiveUserProfile {
+    $ActiveUserName = $null
+
+    try {
+        $CS = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue
+        if ($CS -and -not [string]::IsNullOrWhiteSpace($CS.UserName)) {
+            $ActiveUserName = ($CS.UserName -split '\\')[-1]
+        }
+    } catch {}
+
+    if ([string]::IsNullOrWhiteSpace($ActiveUserName)) {
+        try {
+            $ExpProc = Get-CimInstance -ClassName Win32_Process -Filter "Name = 'explorer.exe'" -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($ExpProc) {
+                $Owner = Invoke-CimMethod -InputObject $ExpProc -MethodName GetOwner -ErrorAction SilentlyContinue
+                if ($Owner -and -not [string]::IsNullOrWhiteSpace($Owner.User)) {
+                    $ActiveUserName = $Owner.User
+                }
+            }
+        } catch {}
+    }
 
     $RegBase = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList"
     if (Test-Path -Path $RegBase) {
-        Get-ChildItem -Path $RegBase -ErrorAction SilentlyContinue | ForEach-Object {
-            $Props = Get-ItemProperty -Path $_.PSPath -ErrorAction SilentlyContinue
-            $Sid = $_.PSChildName
+        foreach ($Key in (Get-ChildItem -Path $RegBase -ErrorAction SilentlyContinue)) {
+            $Props = Get-ItemProperty -Path $Key.PSPath -ErrorAction SilentlyContinue
+            $Sid = $Key.PSChildName
             $Path = $Props.ProfileImagePath
 
             if ($Sid -like "S-1-5-21-*" -and -not [string]::IsNullOrWhiteSpace($Path) -and (Test-Path -Path $Path)) {
                 $Leaf = Split-Path -Path $Path -Leaf
-                if ($Leaf -notin $ExcludedNames) {
-                    $Profiles += [PSCustomObject]@{
+                if (-not [string]::IsNullOrWhiteSpace($ActiveUserName) -and ($Leaf -ieq $ActiveUserName)) {
+                    return [PSCustomObject]@{
                         SID         = $Sid
                         UserName    = $Leaf
                         ProfilePath = $Path
@@ -67,10 +84,21 @@ function Get-LocalUserProfiles {
         }
     }
 
-    return $Profiles
+    $FallbackSid = ""
+    try {
+        $FallbackSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    } catch {}
+
+    $FallbackPath = if (-not [string]::IsNullOrWhiteSpace($env:USERPROFILE)) { $env:USERPROFILE } else { "C:\Users\Default" }
+    $FallbackName = if (-not [string]::IsNullOrWhiteSpace($env:USERNAME)) { $env:USERNAME } else { "Usuario" }
+
+    return [PSCustomObject]@{
+        SID         = $FallbackSid
+        UserName    = $FallbackName
+        ProfilePath = $FallbackPath
+    }
 }
 
-# Funcion auxiliar para limpiar carpetas y registrar en log
 function Clear-TempFolder {
     param (
         [string]$TargetPath,
@@ -109,54 +137,35 @@ function Clear-TempFolder {
     return $DeletedCount
 }
 
-# Limpiar Temp de todos los perfiles locales
-function Clear-AllUsersTemp {
+function Clear-ActiveUserRecent {
     param (
+        [PSCustomObject]$TargetProfile,
         [string]$LogPath
     )
 
-    $TotalDeleted = 0
-    $Profiles = Get-LocalUserProfiles
-
-    foreach ($Prof in $Profiles) {
-        $UserTempPath = Join-Path -Path $Prof.ProfilePath -ChildPath "AppData\Local\Temp"
-        if (Test-Path -Path $UserTempPath) {
-            Write-CacheLog -LogPath $LogPath -Message "Limpiando Temp de usuario '$($Prof.UserName)' ($UserTempPath)..."
-            $TotalDeleted += Clear-TempFolder -TargetPath $UserTempPath -LogPath $LogPath
-        }
+    if (-not $TargetProfile -or [string]::IsNullOrWhiteSpace($TargetProfile.ProfilePath)) {
+        Write-CacheLog -LogPath $LogPath -Message "Perfil de usuario activo no valido para limpiar Recientes."
+        return 0
     }
 
-    return $TotalDeleted
-}
-
-# Limpiar accesos directos de Recientes de todos los perfiles locales
-function Clear-RecentItems {
-    param (
-        [string]$LogPath
+    $DeletedCount = 0
+    $RecentDirs = @(
+        (Join-Path -Path $TargetProfile.ProfilePath -ChildPath "AppData\Roaming\Microsoft\Windows\Recent"),
+        (Join-Path -Path $TargetProfile.ProfilePath -ChildPath "AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations"),
+        (Join-Path -Path $TargetProfile.ProfilePath -ChildPath "AppData\Roaming\Microsoft\Windows\Recent\CustomDestinations")
     )
 
-    $DeletedCount = 0
-    $Profiles = Get-LocalUserProfiles
+    foreach ($Dir in $RecentDirs) {
+        if ([string]::IsNullOrWhiteSpace($Dir) -or -not (Test-Path -Path $Dir)) { continue }
 
-    foreach ($Prof in $Profiles) {
-        $RecentDirs = @(
-            (Join-Path -Path $Prof.ProfilePath -ChildPath "AppData\Roaming\Microsoft\Windows\Recent"),
-            (Join-Path -Path $Prof.ProfilePath -ChildPath "AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations"),
-            (Join-Path -Path $Prof.ProfilePath -ChildPath "AppData\Roaming\Microsoft\Windows\Recent\CustomDestinations")
-        )
-
-        foreach ($Dir in $RecentDirs) {
-            if ([string]::IsNullOrWhiteSpace($Dir) -or -not (Test-Path -Path $Dir)) { continue }
-
-            $Items = Get-ChildItem -Path $Dir -Force -File -ErrorAction SilentlyContinue
-            foreach ($Item in $Items) {
-                try {
-                    Remove-Item -Path $Item.FullName -Force -ErrorAction Stop
-                    Write-CacheLog -LogPath $LogPath -Message "Reciente eliminado [$($Prof.UserName)]: $($Item.FullName)"
-                    $DeletedCount++
-                } catch {
-                    Write-CacheLog -LogPath $LogPath -Message "Reciente en uso / Omitido [$($Prof.UserName)]: $($Item.FullName)"
-                }
+        $Items = Get-ChildItem -Path $Dir -Force -File -ErrorAction SilentlyContinue
+        foreach ($Item in $Items) {
+            try {
+                Remove-Item -Path $Item.FullName -Force -ErrorAction Stop
+                Write-CacheLog -LogPath $LogPath -Message "Reciente eliminado [$($TargetProfile.UserName)]: $($Item.FullName)"
+                $DeletedCount++
+            } catch {
+                Write-CacheLog -LogPath $LogPath -Message "Reciente en uso / Omitido [$($TargetProfile.UserName)]: $($Item.FullName)"
             }
         }
     }
@@ -164,9 +173,9 @@ function Clear-RecentItems {
     return $DeletedCount
 }
 
-# Vaciar Papelera de reciclaje en unidades fijas y perfiles locales
-function Clear-RecycleBinSafe {
+function Clear-ActiveUserRecycleBin {
     param (
+        [PSCustomObject]$TargetProfile,
         [string]$LogPath
     )
 
@@ -177,46 +186,43 @@ function Clear-RecycleBinSafe {
         Write-CacheLog -LogPath $LogPath -Message "Aviso en Clear-RecycleBin: $($_.Exception.Message)"
     }
 
-    $Profiles = Get-LocalUserProfiles
-    $UserSids = @($Profiles | ForEach-Object { $_.SID })
+    if (-not $TargetProfile -or [string]::IsNullOrWhiteSpace($TargetProfile.SID)) {
+        Write-CacheLog -LogPath $LogPath -Message "SID del usuario activo no disponible para revisar `$Recycle.Bin."
+        return $false
+    }
+
     $FixedDrives = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType = 3" -ErrorAction SilentlyContinue
     $RemainingTotal = 0
 
     foreach ($Drive in $FixedDrives) {
         if ([string]::IsNullOrWhiteSpace($Drive.DeviceID)) { continue }
 
-        $RecycleRoot = Join-Path -Path "$($Drive.DeviceID)\" -ChildPath "`$Recycle.Bin"
-        if (-not (Test-Path -Path $RecycleRoot)) { continue }
+        $SidRecyclePath = Join-Path -Path "$($Drive.DeviceID)\`$Recycle.Bin" -ChildPath $TargetProfile.SID
+        if (-not (Test-Path -Path $SidRecyclePath)) { continue }
 
-        $SidDirs = Get-ChildItem -Path $RecycleRoot -Force -Directory -ErrorAction SilentlyContinue
-        foreach ($SidDir in $SidDirs) {
-            if ($SidDir.Name -in $UserSids) {
-                $Entries = Get-ChildItem -Path $SidDir.FullName -Force -ErrorAction SilentlyContinue
-                foreach ($Entry in $Entries) {
-                    try {
-                        Remove-Item -Path $Entry.FullName -Recurse -Force -ErrorAction Stop
-                        Write-CacheLog -LogPath $LogPath -Message "Eliminado de papelera [$($Drive.DeviceID) | $($SidDir.Name)]: $($Entry.FullName)"
-                    } catch {
-                        Write-CacheLog -LogPath $LogPath -Message "No se pudo borrar en papelera [$($Drive.DeviceID) | $($SidDir.Name)]: $($Entry.FullName) -> $($_.Exception.Message)"
-                    }
-                }
-
-                $LeftHere = @(Get-ChildItem -Path $SidDir.FullName -Recurse -Force -ErrorAction SilentlyContinue).Count
-                $RemainingTotal += $LeftHere
+        $Entries = Get-ChildItem -Path $SidRecyclePath -Force -ErrorAction SilentlyContinue
+        foreach ($Entry in $Entries) {
+            try {
+                Remove-Item -Path $Entry.FullName -Recurse -Force -ErrorAction Stop
+                Write-CacheLog -LogPath $LogPath -Message "Eliminado de papelera [$($Drive.DeviceID) | $($TargetProfile.UserName)]: $($Entry.FullName)"
+            } catch {
+                Write-CacheLog -LogPath $LogPath -Message "No se pudo borrar en papelera [$($Drive.DeviceID) | $($TargetProfile.UserName)]: $($Entry.FullName) -> $($_.Exception.Message)"
             }
         }
+
+        $LeftHere = @(Get-ChildItem -Path $SidRecyclePath -Recurse -Force -ErrorAction SilentlyContinue).Count
+        $RemainingTotal += $LeftHere
     }
 
     if ($RemainingTotal -eq 0) {
-        Write-CacheLog -LogPath $LogPath -Message "Estado final papelera (todos los usuarios): Vacia."
+        Write-CacheLog -LogPath $LogPath -Message "Estado final papelera [$($TargetProfile.UserName)]: Vacia."
         return $true
     } else {
-        Write-CacheLog -LogPath $LogPath -Message "Estado final papelera: Quedan $RemainingTotal elemento(s) en alguna unidad/perfil."
+        Write-CacheLog -LogPath $LogPath -Message "Estado final papelera [$($TargetProfile.UserName)]: Quedan $RemainingTotal elemento(s)."
         return $false
     }
 }
 
-# Reiniciar el Explorador de archivos de forma segura
 function Restart-ExplorerSafe {
     param (
         [string]$LogPath
@@ -244,6 +250,9 @@ function Restart-ExplorerSafe {
 do {
     Clear-Host
 
+    $ActiveProfile = Get-ActiveInteractiveUserProfile
+    $ActiveUserTemp = Join-Path -Path $ActiveProfile.ProfilePath -ChildPath "AppData\Local\Temp"
+
     # Carga ejecutable directo desde el repositorio
     irm https://raw.githubusercontent.com/InsuarCorp/W11/main/info.ps1 | iex
     Write-Host ""
@@ -253,18 +262,19 @@ do {
     Write-Host "========================================================================================" -ForegroundColor Magenta
     Write-Host ""
 
+    Write-Host "Usuario activo objetivo: $($ActiveProfile.UserName) ($($ActiveProfile.SID))" -ForegroundColor DarkGray
     Write-Host "Rutas objetivo:" -ForegroundColor DarkGray
     Write-Host " - $WinTemp" -ForegroundColor DarkGray
-    Write-Host " - $UserTemp (todos los perfiles locales)" -ForegroundColor DarkGray
-    Write-Host " - Papelera de reciclaje + Recientes del Explorador (todos los perfiles)" -ForegroundColor DarkGray
+    Write-Host " - $ActiveUserTemp" -ForegroundColor DarkGray
+    Write-Host " - Papelera y Recientes de: $($ActiveProfile.UserName)" -ForegroundColor DarkGray
     Write-Host "Log: $LogFile" -ForegroundColor DarkGray
     Write-Host ""
 
     # Opciones alineadas y limpias
-    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpieza COMPLETA (Temp todos + Papelera + Recientes) y reiniciar Explorador"
+    Write-Host "[1] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpieza COMPLETA (Temp + Papelera + Recientes de $($ActiveProfile.UserName)) y reiniciar Explorador"
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpiar solo C:\Windows\Temp"
-    Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpiar AppData\Local\Temp de todos los usuarios"
-    Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Vaciar Papelera de reciclaje y limpiar Recientes (+ reiniciar Explorador)"
+    Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Limpiar solo AppData\Local\Temp de $($ActiveProfile.UserName)"
+    Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Vaciar Papelera y limpiar Recientes de $($ActiveProfile.UserName) (+ reiniciar Explorador)"
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Ver archivo de log (limpieza_temp.log)"
 
     Write-Host ""
@@ -278,87 +288,84 @@ do {
 
     switch ($choice) {
         { $_ -in '1' } {
-            Write-Host "`n[+] Iniciando limpieza completa..." -ForegroundColor Cyan
+            Write-Host "`n[+] Iniciando limpieza completa para $($ActiveProfile.UserName)..." -ForegroundColor Cyan
             $FechaInicio = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
 
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
-            Write-CacheLog -LogPath $LogFile -Value "Inicio de limpieza completa: $FechaInicio"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "Inicio de limpieza completa ($($ActiveProfile.UserName)): $FechaInicio"
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
 
             Write-Host " -> Borrando archivos de $WinTemp..." -ForegroundColor Yellow
-            Write-CacheLog -LogPath $LogFile -Value "Borrando archivos de $WinTemp"
             $CountWin = Clear-TempFolder -TargetPath $WinTemp -LogPath $LogFile
 
-            Write-Host " -> Borrando archivos Temp de todos los usuarios..." -ForegroundColor Yellow
-            Write-CacheLog -LogPath $LogFile -Value "Borrando archivos Temp de todos los perfiles locales"
-            $CountUser = Clear-AllUsersTemp -LogPath $LogFile
+            Write-Host " -> Borrando archivos de $ActiveUserTemp..." -ForegroundColor Yellow
+            $CountUser = Clear-TempFolder -TargetPath $ActiveUserTemp -LogPath $LogFile
 
-            Write-Host " -> Vaciando Papelera de reciclaje..." -ForegroundColor Yellow
-            $null = Clear-RecycleBinSafe -LogPath $LogFile
+            Write-Host " -> Vaciando Papelera de reciclaje ($($ActiveProfile.UserName))..." -ForegroundColor Yellow
+            $null = Clear-ActiveUserRecycleBin -TargetProfile $ActiveProfile -LogPath $LogFile
 
-            Write-Host " -> Limpiando accesos directos de Recientes..." -ForegroundColor Yellow
-            Write-CacheLog -LogPath $LogFile -Value "Limpiando accesos directos de Recientes"
-            $CountRecent = Clear-RecentItems -LogPath $LogFile
+            Write-Host " -> Limpiando accesos directos de Recientes ($($ActiveProfile.UserName))..." -ForegroundColor Yellow
+            $CountRecent = Clear-ActiveUserRecent -TargetProfile $ActiveProfile -LogPath $LogFile
 
             Restart-ExplorerSafe -LogPath $LogFile
 
             $FechaFin = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
-            Write-CacheLog -LogPath $LogFile -Value "Fin de limpieza: $FechaFin"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "Fin de limpieza: $FechaFin"
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
 
             $TotalElementos = $CountWin + $CountUser + $CountRecent
-            Write-Host "`nLimpieza completada ($TotalElementos archivos/carpetas eliminados + Papelera procesada)." -ForegroundColor Green
+            Write-Host "`nLimpieza completada ($TotalElementos archivos/carpetas eliminados)." -ForegroundColor Green
             Write-Host "Revisa el archivo de log: $LogFile" -ForegroundColor DarkGray
             Read-Host "`nPresione Enter para continuar..."
         }
         { $_ -in '2' } {
             Write-Host "`n[+] Limpiando $WinTemp..." -ForegroundColor Cyan
             $FechaInicio = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
-            Write-CacheLog -LogPath $LogFile -Value "Inicio de limpieza ($WinTemp): $FechaInicio"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "Inicio de limpieza ($WinTemp): $FechaInicio"
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
 
             $CountWin = Clear-TempFolder -TargetPath $WinTemp -LogPath $LogFile
 
             $FechaFin = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "Fin de limpieza: $FechaFin"
+            Write-CacheLog -LogPath $LogFile -Message "Fin de limpieza: $FechaFin"
             Write-Host "Limpieza completada ($CountWin elementos eliminados)." -ForegroundColor Green
             Read-Host "`nPresione Enter para continuar..."
         }
         { $_ -in '3' } {
-            Write-Host "`n[+] Limpiando AppData\Local\Temp de todos los usuarios..." -ForegroundColor Cyan
+            Write-Host "`n[+] Limpiando $ActiveUserTemp..." -ForegroundColor Cyan
             $FechaInicio = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
-            Write-CacheLog -LogPath $LogFile -Value "Inicio de limpieza (Temp todos los usuarios): $FechaInicio"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "Inicio de limpieza ($ActiveUserTemp): $FechaInicio"
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
 
-            $CountUser = Clear-AllUsersTemp -LogPath $LogFile
+            $CountUser = Clear-TempFolder -TargetPath $ActiveUserTemp -LogPath $LogFile
 
             $FechaFin = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "Fin de limpieza: $FechaFin"
+            Write-CacheLog -LogPath $LogFile -Message "Fin de limpieza: $FechaFin"
             Write-Host "Limpieza completada ($CountUser elementos eliminados)." -ForegroundColor Green
             Read-Host "`nPresione Enter para continuar..."
         }
         { $_ -in '4' } {
-            Write-Host "`n[+] Vaciando Papelera y limpiando Recientes..." -ForegroundColor Cyan
+            Write-Host "`n[+] Vaciando Papelera y limpiando Recientes de $($ActiveProfile.UserName)..." -ForegroundColor Cyan
             $FechaInicio = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
-            Write-CacheLog -LogPath $LogFile -Value "Inicio de limpieza (Papelera y Recientes): $FechaInicio"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "Inicio de limpieza (Papelera y Recientes - $($ActiveProfile.UserName)): $FechaInicio"
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
 
             Write-Host " -> Vaciando Papelera de reciclaje..." -ForegroundColor Yellow
-            $null = Clear-RecycleBinSafe -LogPath $LogFile
+            $null = Clear-ActiveUserRecycleBin -TargetProfile $ActiveProfile -LogPath $LogFile
 
             Write-Host " -> Limpiando accesos directos de Recientes..." -ForegroundColor Yellow
-            $CountRecent = Clear-RecentItems -LogPath $LogFile
+            $CountRecent = Clear-ActiveUserRecent -TargetProfile $ActiveProfile -LogPath $LogFile
 
             Restart-ExplorerSafe -LogPath $LogFile
 
             $FechaFin = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
-            Write-CacheLog -LogPath $LogFile -Value "Fin de limpieza: $FechaFin"
-            Write-CacheLog -LogPath $LogFile -Value "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
+            Write-CacheLog -LogPath $LogFile -Message "Fin de limpieza: $FechaFin"
+            Write-CacheLog -LogPath $LogFile -Message "==============================================="
 
             Write-Host "`nProceso completado ($CountRecent elementos de Recientes eliminados)." -ForegroundColor Green
             Read-Host "`nPresione Enter para continuar..."
