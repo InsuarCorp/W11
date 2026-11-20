@@ -20,7 +20,7 @@ do {
     Write-Host "[2] " -NoNewline -ForegroundColor Cyan; Write-Host "Serial" 
     Write-Host "[3] " -NoNewline -ForegroundColor Cyan; Write-Host "Cache" 
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Wsus Update"  
-    Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Herramienta de Impresora"
+    Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Modo Oscuro"
     Write-Host "[6] " -NoNewline -ForegroundColor Cyan; Write-Host "Modo Dios"
     
     Write-Host ""
@@ -55,12 +55,12 @@ do {
         }
         { $_ -in '5' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/5005-Impresora.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/5005-TemaOscuro.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '6' } {
             Write-Host "`n[+] Cargando modulo 05 (Tweak)..." -ForegroundColor Cyan
-            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/5005-ModoDios.ps1 | iex
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/5006-ModoDios.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         
