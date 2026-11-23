@@ -11,9 +11,11 @@ do {
     
     # Menu principal de Redes
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Ver redes Wi-Fi guardadas (Perfiles)" 
-    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Mostrar Wi-Fi y sus contraseñas en texto plano" 
+    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Mostrar Wi-Fi y sus contrasenas en texto plano" 
     Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Buscar redes Wi-Fi cercanas (Cercanias)"
     Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Eliminar un perfil de red Wi-Fi guardado"
+    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Exportar perfiles Wi-Fi con clave (C:\InsuarCorp)"
+    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Importar perfiles Wi-Fi desde (C:\InsuarCorp)"
     Write-Host ""
 
     Write-Host "[00] SALIR / VOLVER" -ForegroundColor Yellow
@@ -34,73 +36,83 @@ do {
                 netsh wlan show profiles
                 Write-Host ""
                 Write-Host "[OK] Listado completado." -ForegroundColor Green
-                Start-Sleep -Seconds 1
             }
-         
             "2" {
                 Write-Host ""
-                Write-Host "[+] Recuperando perfiles y contraseñas de Wi-Fi..." -ForegroundColor Cyan
-                
-                # Obtiene cada perfil y extrae su clave en texto plano
-                (netsh wlan show profiles) | Select-String "\:(.+)$" | ForEach-Object {
-                    $ssid = $_.Matches.Groups[1].Value.Trim()
-                    $pass = (netsh wlan show profile name="$ssid" key=clear) | Select-String "Contenido de la clave\W+\:(.+)$"
-                    
-                    [PSCustomObject]@{
-                        Red        = $ssid
-                        Contrasena = if ($pass) { $pass.Matches.Groups[1].Value.Trim() } else { "Sin clave / Abierta" }
-                    }
-                } | Format-Table -AutoSize
-
+                Write-Host "[+] Mostrando perfiles Wi-Fi y contraseñas..." -ForegroundColor Cyan
+                $profiles = (netsh wlan show profiles) | Select-String "Perfil de todos los usuarios\s*:\s*(.+)$" | ForEach-Object { $_.Matches.Groups[1].Value.Trim() }
+                if (-not $profiles) {
+                    $profiles = (netsh wlan show profiles) | Select-String "All User Profile\s*:\s*(.+)$" | ForEach-Object { $_.Matches.Groups[1].Value.Trim() }
+                }
+                foreach ($p in $profiles) {
+                    Write-Host "--------------------------------------------------" -ForegroundColor DarkGray
+                    netsh wlan show profile name="$p" key=clear
+                }
                 Write-Host ""
-                Write-Host "[OK] Proceso finalizado." -ForegroundColor Green
-                Start-Sleep -Seconds 1
+                Write-Host "[OK] Consulta finalizada." -ForegroundColor Green
             }
-
             "3" {
                 Write-Host ""
-                Write-Host "[+] Escaneando redes Wi-Fi cercanas en el area..." -ForegroundColor Cyan
+                Write-Host "[+] Buscando redes Wi-Fi cercanas..." -ForegroundColor Cyan
                 netsh wlan show networks mode=bssid
                 Write-Host ""
-                Write-Host "[OK] Escaneo de cercanias finalizado." -ForegroundColor Green
-                Start-Sleep -Seconds 1
+                Write-Host "[OK] Escaneo completado." -ForegroundColor Green
             }
-
             "4" {
                 Write-Host ""
-                Write-Host "[+] Perfiles de red guardados actualmente:" -ForegroundColor Cyan
-                netsh wlan show profiles
-                Write-Host ""
-                
-                $targetRed = Read-Host "Ingrese el EXACTO nombre (SSID) de la red que desea eliminar"
-                
-                if (-not [string]::IsNullOrWhiteSpace($targetRed)) {
-                    Write-Host "[+] Eliminando perfil '$targetRed'..." -ForegroundColor Yellow
-                    netsh wlan delete profile name="$targetRed"
-                    Write-Host ""
-                    Write-Host "[OK] Operacion de borrado finalizada." -ForegroundColor Green
+                $perfilEliminar = Read-Host "Ingrese el nombre exacto del perfil Wi-Fi a eliminar"
+                if (-not [string]::IsNullOrWhiteSpace($perfilEliminar)) {
+                    netsh wlan delete profile name="$perfilEliminar"
+                    Write-Host "[OK] Operacion de eliminacion ejecutada." -ForegroundColor Green
                 } else {
-                    Write-Host "[X] No se ingreso ningun nombre valido." -ForegroundColor Red
+                    Write-Host "[!] Nombre de perfil vacio." -ForegroundColor Yellow
                 }
-                
-                Start-Sleep -Seconds 1
             }
-
-            "" {
+            "5" {
+                Write-Host ""
+                Write-Host "[+] Exportando perfiles Wi-Fi (key=clear) a C:\InsuarCorp..." -ForegroundColor Cyan
+                $WifiDir = "C:\InsuarCorp"
+                if (-not (Test-Path -Path $WifiDir)) {
+                    New-Item -Path $WifiDir -ItemType Directory -Force | Out-Null
+                }
+                netsh wlan export profile key=clear folder="$WifiDir"
+                Write-Host ""
+                Write-Host "[OK] Exportacion finalizada en $WifiDir." -ForegroundColor Green
+            }
+            "6" {
+                Write-Host ""
+                Write-Host "[+] Importando perfiles Wi-Fi desde C:\InsuarCorp..." -ForegroundColor Cyan
+                $WifiDir = "C:\InsuarCorp"
+                if (-not (Test-Path -Path $WifiDir)) {
+                    Write-Host "[!] No existe la carpeta $WifiDir." -ForegroundColor Yellow
+                } else {
+                    $XmlFiles = Get-ChildItem -Path $WifiDir -Filter "*.xml" -ErrorAction SilentlyContinue
+                    if (-not $XmlFiles) {
+                        Write-Host "[!] No se encontraron archivos .xml en $WifiDir." -ForegroundColor Yellow
+                    } else {
+                        foreach ($Xml in $XmlFiles) {
+                            Write-Host "[*] Importando: $($Xml.Name)" -ForegroundColor Cyan
+                            netsh wlan add profile filename="$($Xml.FullName)"
+                        }
+                        Write-Host ""
+                        Write-Host "[OK] Importacion completada." -ForegroundColor Green
+                    }
+                }
+            }
+            "0" {
                 return
             }
-
-            Default {
-                Write-Host "Opcion '$choice' no valida." -ForegroundColor Red
-                Start-Sleep -Seconds 1
+            default {
+                Write-Host "[!] Opcion no valida: $choice" -ForegroundColor Red
             }
         }
     }
 
+    if ($choices -contains "0") {
+        break
+    }
+
     Write-Host ""
-    Write-Host "==========================================================" -ForegroundColor Yellow
-    Write-Host "   Tarea de red finalizada.                               " -ForegroundColor Green
-    Write-Host "==========================================================" -ForegroundColor Yellow
-    Read-Host "Presione Enter para volver al menu..."
+    Read-Host "Presione Enter para continuar..."
 
 } while ($true)
