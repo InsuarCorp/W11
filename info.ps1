@@ -10,12 +10,23 @@ Write-Host "╚═╝╚═╝  ╚═══╝╚══════╝ ╚═�
 Write-Host ""
 Write-Host "Los registros se guardan en c:\InsuarCorp"
 Write-Host ""
-#  Comprobar si se está ejecutando como Administrador
+# Comprobar si se esta ejecutando como Administrador
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "[!] Este script debe ejecutarse como ADMINISTRADOR." -ForegroundColor Red
     Write-Host "[*] Ejecutar con PowerShell como administrador." -ForegroundColor Yellow
     Pause
     Exit
+}
+
+# Verificar y crear carpeta de registros C:\InsuarCorp si no existe
+$LogDir = "C:\InsuarCorp"
+if (-not (Test-Path -Path $LogDir)) {
+    try {
+        New-Item -Path $LogDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
+        Write-Host "[+] Carpeta creada: $LogDir" -ForegroundColor Green
+    } catch {
+        Write-Host "[!] No se pudo crear $LogDir : $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
 Write-Host ""
