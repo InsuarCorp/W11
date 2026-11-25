@@ -14,20 +14,20 @@ do {
     Write-Host ""
     
     # Menu en 3 Columnas (Horizontal)
-    Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Bateria       " -NoNewline
-    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Listar Hardware " -NoNewline
+    Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Bateria       " 
+    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Listar Hardware "
     Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Estado del Sistema"
     
-    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de CPU        " -NoNewline
-    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Red        " -NoNewline
+    Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de CPU        " 
+    Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Red        " 
     Write-Host "[10] " -NoNewline -ForegroundColor Cyan; Write-Host "Generar Reporte Completo"
     
-    Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de RAM        " -NoNewline
-    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Discos     " -NoNewline
+    Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de RAM        "
+    Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Discos     " 
     Write-Host "[11] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir Carpeta de Reportes"
     
-    Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " -NoNewline
-    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Trim SSD/M2       " -NoNewline
+    Write-Host "[04] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de GPU        " 
+    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Activar Trim SSD/M2       " 
     Write-Host "[12] " -NoNewline -ForegroundColor Cyan; Write-Host "Resumen del sistema       "
     Write-Host ""
     
