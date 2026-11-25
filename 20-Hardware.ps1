@@ -14,7 +14,7 @@ do {
     Write-Host ""
     
     # Menu en 3 Columnas (Horizontal)
-    Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Resumen del Sistema       " -NoNewline
+    Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Bateria       " -NoNewline
     Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion del BIOS      " -NoNewline
     Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Estado del Sistema"
     
@@ -39,8 +39,8 @@ do {
 
     switch ($choice) {
         { $_ -in '1', '01' } {
-            Write-Host "`n[+] Obteniendo Resumen del Sistema..." -ForegroundColor Cyan
-            Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, OSArchitecture, RegisteredUser | Format-List
+            Write-Host "`n[+] Cargando modulo 01 (Bateria)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/2001-Bateria.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '2', '02' } {
