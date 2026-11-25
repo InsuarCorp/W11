@@ -16,7 +16,7 @@ do {
     # Menu en 3 Columnas (Horizontal)
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Bateria       " 
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Listar Hardware "
-    Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Estado del Sistema"
+    Write-Host "[03] " -NoNewline -ForegroundColor Cyan; Write-Host "Bsod"
     
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de CPU        " 
     Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de Red        " 
@@ -44,13 +44,13 @@ do {
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '2', '02' } {
-            Write-Host "`n[+] Cargando modulo 01 Hardware)..." -ForegroundColor Cyan
+            Write-Host "`n[+] Cargando modulo 02 Listar Hardware)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/2002-ListarHardware.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '3', '03' } {
-            Write-Host "`n[+] Obteniendo Informacion de Memoria RAM..." -ForegroundColor Cyan
-            Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer, Capacity, Speed, DeviceLocator | Format-Table -AutoSize
+           Write-Host "`n[+] Cargando modulo 03 Bsod)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/2003-Bsod.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '4', '04' } {
