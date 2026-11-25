@@ -15,7 +15,7 @@ do {
     
     # Menu en 3 Columnas (Horizontal)
     Write-Host "[01] " -NoNewline -ForegroundColor Cyan; Write-Host "Bateria       " -NoNewline
-    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion del BIOS      " -NoNewline
+    Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Listar Hardware " -NoNewline
     Write-Host "[09] " -NoNewline -ForegroundColor Cyan; Write-Host "Estado del Sistema"
     
     Write-Host "[02] " -NoNewline -ForegroundColor Cyan; Write-Host "Informacion de CPU        " -NoNewline
@@ -44,8 +44,8 @@ do {
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '2', '02' } {
-            Write-Host "`n[+] Obteniendo Informacion del Procesador (CPU)..." -ForegroundColor Cyan
-            Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed | Format-List
+            Write-Host "`n[+] Cargando modulo 01 Hardware)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/2002-ListarHardware.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '3', '03' } {
