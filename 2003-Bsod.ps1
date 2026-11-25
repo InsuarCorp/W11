@@ -132,6 +132,37 @@ function Get-CrashDumpConfigReport {
     return ($Obj | Format-List | Out-String)
 }
 
+function Clear-PreviousBsodLogs {
+    if (-not (Test-Path -Path $LogDir)) {
+        Write-Host "`n[!] No existe la carpeta $LogDir." -ForegroundColor Yellow
+        return
+    }
+
+    $BsodFiles = Get-ChildItem -Path $LogDir -Filter "BSOD_*.log" -ErrorAction SilentlyContinue
+    $HasLatest = Test-Path -Path $LatestBsodLog
+
+    if (-not $BsodFiles -and -not $HasLatest) {
+        Write-Host "`n[!] No hay registros previos de BSOD en $LogDir." -ForegroundColor Yellow
+        return
+    }
+
+    Write-Host "`n[!] Esto eliminara los logs BSOD_*.log y Ultimo_BSOD.log en $LogDir." -ForegroundColor Yellow
+    $Confirm = Read-Host "Escriba S para confirmar o cualquier otra tecla para cancelar"
+    if ($Confirm -notin @("S", "s")) {
+        Write-Host "[*] Operacion cancelada." -ForegroundColor Cyan
+        return
+    }
+
+    if ($BsodFiles) {
+        Remove-Item -Path $BsodFiles.FullName -Force -ErrorAction SilentlyContinue
+    }
+    if ($HasLatest) {
+        Remove-Item -Path $LatestBsodLog -Force -ErrorAction SilentlyContinue
+    }
+
+    Write-Host "[OK] Registros previos de BSOD eliminados en $LogDir." -ForegroundColor Green
+}
+
 do {
     Clear-Host
 
@@ -151,6 +182,7 @@ do {
     Write-Host "[05] " -NoNewline -ForegroundColor Cyan; Write-Host "Guardar reporte completo BSOD en C:\InsuarCorp"
     Write-Host "[06] " -NoNewline -ForegroundColor Cyan; Write-Host "Ver ultimo log BSOD guardado (Ultimo_BSOD.log)"
     Write-Host "[07] " -NoNewline -ForegroundColor Cyan; Write-Host "Abrir carpeta C:\InsuarCorp"
+    Write-Host "[08] " -NoNewline -ForegroundColor Cyan; Write-Host "Eliminar todo registro previo BSOD (C:\InsuarCorp)"
 
     Write-Host ""
     Write-Host "[100] " -NoNewline -ForegroundColor Cyan; Write-Host "Analizar este Github"
@@ -212,6 +244,10 @@ do {
             if (Ensure-BsodLogDirectory) {
                 Start-Process explorer.exe $LogDir
             }
+        }
+        { $_ -in '8', '08' } {
+            Clear-PreviousBsodLogs
+            Read-Host "`nPresione Enter para continuar..."
         }
         { $_ -in '100' } {
             Write-Host "`n[+] Analizando Repositorio..." -ForegroundColor Cyan
