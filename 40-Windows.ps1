@@ -20,6 +20,7 @@ do {
     Write-Host "[4] " -NoNewline -ForegroundColor Cyan; Write-Host "Reiniciar Update  "  
     Write-Host "[5] " -NoNewline -ForegroundColor Cyan; Write-Host "Reiniciar Impresora"
     Write-Host "[6] " -NoNewline -ForegroundColor Cyan; Write-Host "Gestion de Wi-Fi"
+    Write-Host "[7] " -NoNewline -ForegroundColor Cyan; Write-Host "Reboot"
         Write-Host ""
         Write-Host ""
         Write-Host ""
@@ -60,6 +61,11 @@ do {
         { $_ -in '6' } {
             Write-Host "`n[+] Cargando modulo 06 (WiFi)..." -ForegroundColor Cyan
             irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4006-Wifi.ps1 | iex
+            Read-Host "Presione Enter para continuar..."
+        }
+         { $_ -in '7' } {
+            Write-Host "`n[+] Cargando modulo 06 (WiFi)..." -ForegroundColor Cyan
+            irm https://raw.githubusercontent.com/InsuarCorp/W11/main/4007-Reboot.ps1 | iex
             Read-Host "Presione Enter para continuar..."
         }
         { $_ -in '100' } {
